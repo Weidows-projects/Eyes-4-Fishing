@@ -3,7 +3,7 @@
  * @Author: Weidows
  * @Date: 2021-10-21 10:06:57
  * @LastEditors: Weidows
- * @LastEditTime: 2021-10-21 10:49:27
+ * @LastEditTime: 2022-02-27 23:22:49
  * @FilePath: \Eyes-4-Fishing\README.md
  * @Description:
  * @!: *********************************************************************
@@ -38,3 +38,11 @@
 2. 商家货架上白白净净(大部分人都这样),或者有很多已售出的商品(至少不是骗子)
 3. 关注数比粉丝数更能体现出商家是不是正常人
 4. 走闲鱼平台交易,不要!不要!不要转到微信/支付宝/银行卡支付
+
+> 群友: 根据我多年的闲鱼经验，一般来说，定位在珠三角地区用户，我是不会买他们的电子产品的
+
+<a>![分割线](https://cdn.jsdelivr.net/gh/Weidows/Images/img/divider.png)</a>
+
+# 其他推荐
+
+> [咸鱼黑话大全](https://www.bilibili.com/video/BV1eu411174i)
