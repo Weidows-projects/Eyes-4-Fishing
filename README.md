@@ -19,7 +19,7 @@ top_img:
  * @Author: Weidows
  * @Date: 2021-10-21 10:06:57
  * @LastEditors: Weidows
- * @LastEditTime: 2022-03-04 23:05:10
+ * @LastEditTime: 2022-03-05 00:32:59
  * @FilePath: \Blog-private\source\_posts\life\Eyes-4-Fishing\README.md
  * @Description:
  * @!: *********************************************************************
@@ -34,7 +34,7 @@ top_img:
 
 🔥 闲鱼购物避险法则,鉴别过滤不良商家.
 
-⏩ [文章地址](https://weidows.github.io/post/life/闲鱼/) | [仓库地址](https://github.com/Weidows-projects/Eyes-4-Fishing) ✔️ 欢迎提交 pr 补充!
+⏩ [文章地址](https://weidows.github.io/post/life/Eyes-4-Fishing/README) | [仓库地址](https://github.com/Weidows-projects/Eyes-4-Fishing) ✔️ 欢迎提交 pr 补充!
 
 <a>![分割线](https://cdn.jsdelivr.net/gh/Weidows/Images/img/divider.png)</a>
 
