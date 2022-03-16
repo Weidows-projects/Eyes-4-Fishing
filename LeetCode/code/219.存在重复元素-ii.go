@@ -3,7 +3,7 @@
  * @Author: Weidows
  * @Date: 2022-03-15 23:48:39
  * @LastEditors: Weidows
- * @LastEditTime: 2022-03-16 00:03:19
+ * @LastEditTime: 2022-03-16 15:12:03
  * @FilePath: \Blog-private\source\_posts\public-post\LeetCode\code\219.存在重复元素-ii.go
  * @Description:
  * @!: *********************************************************************
@@ -64,6 +64,10 @@ package main
 
 // @lc code=start
 func containsNearbyDuplicate(nums []int, k int) bool {
+	return solu2(nums, k)
+}
+
+func solu1(nums []int, k int) bool {
 	// int -> []int
 	maps := make(map[int][]int)
 
@@ -83,6 +87,23 @@ func containsNearbyDuplicate(nums []int, k int) bool {
 					return true
 				}
 			}
+		}
+	}
+	return false
+}
+
+func solu2(nums []int, k int) bool {
+	queue := make([]int, 0)
+
+	for _, v := range nums {
+		for _, j := range queue {
+			if v == j {
+				return true
+			}
+		}
+		queue = append(queue, v)
+		if len(queue) > k {
+			queue = queue[1:]
 		}
 	}
 	return false
