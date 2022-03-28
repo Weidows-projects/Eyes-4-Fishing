@@ -74,6 +74,24 @@ import "math"
 
 // @lc code=start
 func pivotIndex(nums []int) int {
+	totleSum := 0
+	for _, v := range nums {
+		totleSum += v
+	}
+
+	leftSum := 0
+	for i, v := range nums {
+		if leftSum == totleSum-leftSum-v {
+			return i
+		}
+		leftSum += v
+	}
+
+	return -1
+}
+
+// false: 双指针解法
+func double_pointer(nums []int) int {
 	leftIndex, rightIndex := -1, len(nums)
 	leftSum, rightSum := 0, 0
 
