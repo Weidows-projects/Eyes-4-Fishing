@@ -122,3 +122,7 @@ class Solution(object):
 
 
 # @lc code=end
+# Accepted
+# 109/109 cases passed (92 ms)
+# Your runtime beats 51.6 % of python submissions
+# Your memory usage beats 89.5 % of python submissions (14.8 MB)
