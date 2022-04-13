@@ -25,6 +25,16 @@ top_img:
  * @!: *********************************************************************
 -->
 
+## 序
+
+此文为其他文章的代码部分:
+
+> [🐊All-about-AI](../../../AI/AI)
+
+也提供了 notebook 形式: [代码地址](https://github.com/Weidows-projects/public-post/blob/main/notebook/ML/ML.ipynb)
+
+<a>![分割线](https://cdn.jsdelivr.net/gh/Weidows/Images/img/divider.png)</a>
+
 ## 数据预处理方法
 
 ### 标准化-均值移除
@@ -443,6 +453,225 @@ mp.show()
     
 
 
+### 分类问题
+
+#### 决策树分类
+
+
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+import pydotplus
+
+mpl.rcParams['font.sans-serif'] = ['simHei']
+mpl.rcParams['axes.unicode_minus'] = False
+
+iris_feature_E = 'sepal length', 'sepal width', 'petal length', 'petal width'
+iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
+iris_class = 'Iris-setosa', 'Iris-versicolor', 'Iris-virginica'
+
+path = 'iris_classification/iris.data'  # 数据文件路径
+data = pd.read_csv(path, header=None)
+x = data[list(range(4))]
+# y = pd.Categorical(data[4]).codes
+y = LabelEncoder().fit_transform(data[4])
+# 为了可视化，仅使用前两列特征
+x = x[[0, 1]]
+# x = x.iloc[:, :2]
+x_train, x_test, y_train, y_test = train_test_split(x,
+                                                    y,
+                                                    test_size=0.3,
+                                                    random_state=1)
+
+# 决策树参数估计
+# min_samples_split = 10：如果该结点包含的样本数目大于10，则(有可能)对其分支
+# min_samples_leaf = 10：若将某结点分支后，得到的每个子结点样本数目都大于10，则完成分支；否则，不进行分支
+model = DecisionTreeClassifier(criterion='entropy')
+model.fit(x_train, y_train)
+y_train_pred = model.predict(x_train)
+print('训练集正确率：', accuracy_score(y_train, y_train_pred))
+y_test_hat = model.predict(x_test)  # 测试数据
+print('测试集正确率：', accuracy_score(y_test, y_test_hat))
+
+# 保存
+# dot -Tpng my.dot -o my.png
+# 1、输出
+# with open('iris.dot', 'w') as f:
+#     tree.export_graphviz(model, out_file=f, feature_names=iris_feature_E[0:2], class_names=iris_class,
+#                          filled=True, rounded=True, special_characters=True)
+tree.export_graphviz(model,
+                     out_file='iris_classification/iris.dot',
+                     feature_names=iris_feature_E[0:2],
+                     class_names=iris_class,
+                     filled=True,
+                     rounded=True,
+                     special_characters=True)
+# 2、给定文件名
+# tree.export_graphviz(model, out_file='iris.dot')
+# tree.export_graphviz(model, out_file='iris.dot')
+# 3、输出为pdf格式
+dot_data = tree.export_graphviz(model,
+                                out_file=None,
+                                feature_names=iris_feature_E[0:2],
+                                class_names=iris_class,
+                                filled=True,
+                                rounded=True,
+                                special_characters=True)
+graph = pydotplus.graph_from_dot_data(dot_data)
+graph.write_pdf('iris_classification/iris.pdf')
+f = open('iris_classification/iris.png', 'wb')
+f.write(graph.create_png())
+f.close()
+
+# 画图
+N, M = 50, 50  # 横纵各采样多少个值
+x1_min, x2_min = x.min()
+x1_max, x2_max = x.max()
+t1 = np.linspace(x1_min, x1_max, N)
+t2 = np.linspace(x2_min, x2_max, M)
+x1, x2 = np.meshgrid(t1, t2)  # 生成网格采样点
+x_show = np.stack((x1.flat, x2.flat), axis=1)  # 测试点
+print(x_show.shape)
+print('x_show = \n', x_show)
+
+cm_light = mpl.colors.ListedColormap(['#A0FFA0', '#FFA0A0', '#A0A0FF'])
+cm_dark = mpl.colors.ListedColormap(['g', 'r', 'b'])
+y_show_hat = model.predict(x_show)  # 预测值
+print(y_show_hat.shape)
+print(y_show_hat)
+y_show_hat = y_show_hat.reshape(x1.shape)  # 使之与输入的形状相同
+print(y_show_hat)
+plt.figure(facecolor='w')
+plt.pcolormesh(x1, x2, y_show_hat, cmap=cm_light)  # 预测值的显示
+plt.scatter(x_test[0],
+            x_test[1],
+            c=y_test.ravel(),
+            edgecolors='k',
+            s=100,
+            zorder=10,
+            cmap=cm_dark,
+            marker='*')  # 测试数据
+plt.scatter(x[0], x[1], c=y.ravel(), edgecolors='k', s=20,
+            cmap=cm_dark)  # 全部数据
+plt.xlabel(iris_feature[0], fontsize=13)
+plt.ylabel(iris_feature[1], fontsize=13)
+plt.xlim(x1_min, x1_max)
+plt.ylim(x2_min, x2_max)
+plt.grid(b=True, ls=':', color='#606060')
+plt.title('鸢尾花数据的决策树分类', fontsize=15)
+plt.show()
+
+# 训练集上的预测结果
+y_test = y_test.reshape(-1)
+print(y_test_hat)
+print(y_test)
+result = (y_test_hat == y_test)  # True则预测正确，False则预测错误
+acc = np.mean(result)
+print('准确度: %.2f%%' % (100 * acc))
+
+# 过拟合：错误率
+depth = np.arange(1, 15)
+err_train_list = []
+err_test_list = []
+clf = DecisionTreeClassifier(criterion='entropy')
+for d in depth:
+    clf.set_params(max_depth=d)
+    clf.fit(x_train, y_train)
+    y_train_pred = clf.predict(x_train)
+    err_train = 1 - accuracy_score(y_train, y_train_pred)
+    err_train_list.append(err_train)
+    y_test_pred = clf.predict(x_test)
+    err_test = 1 - accuracy_score(y_test, y_test_pred)
+    err_test_list.append(err_test)
+    print(d, ' 测试集错误率: %.2f%%' % (100 * err_test))
+plt.figure(facecolor='w')
+plt.plot(depth,
+         err_test_list,
+         'ro-',
+         markeredgecolor='k',
+         lw=2,
+         label='测试集错误率')
+plt.plot(depth,
+         err_train_list,
+         'go-',
+         markeredgecolor='k',
+         lw=2,
+         label='训练集错误率')
+plt.xlabel('决策树深度', fontsize=13)
+plt.ylabel('错误率', fontsize=13)
+plt.legend(loc='lower left', fontsize=13)
+plt.title('决策树深度与过拟合', fontsize=15)
+plt.grid(b=True, ls=':', color='#606060')
+plt.show()
+```
+
+    训练集正确率： 0.9523809523809523
+    测试集正确率： 0.6
+    (2500, 2)
+    x_show = 
+     [[4.3        2.        ]
+     [4.37346939 2.        ]
+     [4.44693878 2.        ]
+     ...
+     [7.75306122 4.4       ]
+     [7.82653061 4.4       ]
+     [7.9        4.4       ]]
+    (2500,)
+    [0 0 0 ... 2 2 2]
+    [[0 0 0 ... 1 1 1]
+     [0 0 0 ... 1 1 1]
+     [0 0 0 ... 1 1 1]
+     ...
+     [0 0 0 ... 2 2 2]
+     [0 0 0 ... 2 2 2]
+     [0 0 0 ... 2 2 2]]
+    
+
+    C:\Users\utsuk\AppData\Local\Temp\ipykernel_24332\3076338488.py:91: MatplotlibDeprecationWarning: shading='flat' when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading='auto', 'nearest' or 'gouraud', or set rcParams['pcolor.shading'].  This will become an error two minor releases later.
+      plt.pcolormesh(x1, x2, y_show_hat, cmap=cm_light)  # 预测值的显示
+    
+
+
+    
+![png](ML_files/ML_16_2.png)
+    
+
+
+    [0 2 2 0 2 2 1 0 0 2 2 0 1 2 1 0 2 1 0 0 1 0 2 0 2 1 0 0 1 1 2 2 2 2 1 0 1
+     0 2 1 2 0 1 1 1]
+    [0 1 1 0 2 1 2 0 0 2 1 0 2 1 1 0 1 1 0 0 1 1 1 0 2 1 0 0 1 2 1 2 1 2 2 0 1
+     0 1 2 2 0 2 2 1]
+    准确度: 60.00%
+    1  测试集错误率: 44.44%
+    2  测试集错误率: 40.00%
+    3  测试集错误率: 20.00%
+    4  测试集错误率: 24.44%
+    5  测试集错误率: 24.44%
+    6  测试集错误率: 26.67%
+    7  测试集错误率: 35.56%
+    8  测试集错误率: 40.00%
+    9  测试集错误率: 37.78%
+    10  测试集错误率: 40.00%
+    11  测试集错误率: 35.56%
+    12  测试集错误率: 35.56%
+    13  测试集错误率: 37.78%
+    14  测试集错误率: 40.00%
+    
+
+
+    
+![png](ML_files/ML_16_4.png)
+    
+
+
 ## 代码相关
 
 ### 存储-读取模型
@@ -504,7 +733,7 @@ mp.show()
 
 
     
-![png](ML_files/ML_16_1.png)
+![png](ML_files/ML_18_1.png)
     
 
 
@@ -539,7 +768,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_18_0.png)
+![png](ML_files/ML_20_0.png)
     
 
 
