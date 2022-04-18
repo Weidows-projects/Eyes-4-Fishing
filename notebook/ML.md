@@ -453,7 +453,7 @@ mp.show()
     
 
 
-### 分类问题
+### 决策树-随机森林
 
 #### 决策树分类
 
@@ -550,7 +550,7 @@ print(y_show_hat)
 y_show_hat = y_show_hat.reshape(x1.shape)  # 使之与输入的形状相同
 print(y_show_hat)
 plt.figure(facecolor='w')
-plt.pcolormesh(x1, x2, y_show_hat, cmap=cm_light)  # 预测值的显示
+plt.pcolormesh(x1, x2, y_show_hat, cmap=cm_light, shading='auto')  # 预测值的显示
 plt.scatter(x_test[0],
             x_test[1],
             c=y_test.ravel(),
@@ -614,7 +614,7 @@ plt.show()
 ```
 
     训练集正确率： 0.9523809523809523
-    测试集正确率： 0.6
+    测试集正确率： 0.6222222222222222
     (2500, 2)
     x_show = 
      [[4.3        2.        ]
@@ -635,40 +635,1061 @@ plt.show()
      [0 0 0 ... 2 2 2]]
     
 
-    C:\Users\utsuk\AppData\Local\Temp\ipykernel_24332\3076338488.py:91: MatplotlibDeprecationWarning: shading='flat' when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading='auto', 'nearest' or 'gouraud', or set rcParams['pcolor.shading'].  This will become an error two minor releases later.
-      plt.pcolormesh(x1, x2, y_show_hat, cmap=cm_light)  # 预测值的显示
+
+    
+![png](ML_files/ML_16_1.png)
     
 
 
-    
-![png](ML_files/ML_16_2.png)
-    
-
-
-    [0 2 2 0 2 2 1 0 0 2 2 0 1 2 1 0 2 1 0 0 1 0 2 0 2 1 0 0 1 1 2 2 2 2 1 0 1
+    [0 1 2 0 2 2 1 0 0 2 2 0 1 2 1 0 2 1 0 0 1 0 2 0 2 1 0 0 1 1 2 2 2 2 1 0 1
      0 2 1 2 0 1 1 1]
     [0 1 1 0 2 1 2 0 0 2 1 0 2 1 1 0 1 1 0 0 1 1 1 0 2 1 0 0 1 2 1 2 1 2 2 0 1
      0 1 2 2 0 2 2 1]
-    准确度: 60.00%
+    准确度: 62.22%
     1  测试集错误率: 44.44%
     2  测试集错误率: 40.00%
     3  测试集错误率: 20.00%
     4  测试集错误率: 24.44%
     5  测试集错误率: 24.44%
-    6  测试集错误率: 26.67%
-    7  测试集错误率: 35.56%
+    6  测试集错误率: 28.89%
+    7  测试集错误率: 37.78%
     8  测试集错误率: 40.00%
     9  测试集错误率: 37.78%
     10  测试集错误率: 40.00%
-    11  测试集错误率: 35.56%
-    12  测试集错误率: 35.56%
-    13  测试集错误率: 37.78%
-    14  测试集错误率: 40.00%
+    11  测试集错误率: 37.78%
+    12  测试集错误率: 37.78%
+    13  测试集错误率: 40.00%
+    14  测试集错误率: 37.78%
     
 
 
     
-![png](ML_files/ML_16_4.png)
+![png](ML_files/ML_16_3.png)
+    
+
+
+#### 随机森林
+
+
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
+
+iris_feature = u'花萼长度', u'花萼宽度', u'花瓣长度', u'花瓣宽度'
+path = 'iris_classification/iris.data'  # 数据文件路径
+data = pd.read_csv(path, header=None)
+x_prime = data[list(range(4))]
+y = pd.Categorical(data[4]).codes
+x_prime_train, x_prime_test, y_train, y_test = train_test_split(
+    x_prime, y, train_size=0.7, random_state=0)
+
+feature_pairs = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]
+plt.figure(figsize=(8, 6), facecolor='#FFFFFF')
+for i, pair in enumerate(feature_pairs):
+    # 准备数据
+    x_train = x_prime_train[pair]
+    x_test = x_prime_test[pair]
+
+    # 决策树学习
+    model = DecisionTreeClassifier(criterion='entropy', min_samples_leaf=3)
+    model.fit(x_train, y_train)
+
+    N, M = 500, 500  # 横纵各采样多少个值
+    x1_min, x2_min = x_train.min()
+    x1_max, x2_max = x_train.max()
+    t1 = np.linspace(x1_min, x1_max, N)
+    t2 = np.linspace(x2_min, x2_max, M)
+    x1, x2 = np.meshgrid(t1, t2)  # 生成网格采样点
+    x_show = np.stack((x1.flat, x2.flat), axis=1)  # 测试点
+
+    # 训练集上的预测结果
+    y_train_pred = model.predict(x_train)
+    acc_train = accuracy_score(y_train, y_train_pred)
+    y_test_pred = model.predict(x_test)
+    acc_test = accuracy_score(y_test, y_test_pred)
+    print('特征：', iris_feature[pair[0]], ' + ', iris_feature[pair[1]])
+    print('\t训练集准确率: %.4f%%' % (100 * acc_train))
+    print('\t测试集准确率: %.4f%%\n' % (100 * acc_test))
+
+    cm_light = mpl.colors.ListedColormap(['#A0FFA0', '#FFA0A0', '#A0A0FF'])
+    cm_dark = mpl.colors.ListedColormap(['g', 'r', 'b'])
+    y_hat = model.predict(x_show)
+    y_hat = y_hat.reshape(x1.shape)
+    plt.subplot(2, 3, i + 1)
+    plt.contour(x1,
+                x2,
+                y_hat,
+                colors='k',
+                levels=[0, 1],
+                antialiased=True,
+                linewidths=1)
+    plt.pcolormesh(x1, x2, y_hat, cmap=cm_light, shading='auto')  # 预测值
+    plt.scatter(x_train[pair[0]],
+                x_train[pair[1]],
+                c=y_train,
+                s=20,
+                edgecolors='k',
+                cmap=cm_dark,
+                label=u'训练集')
+    plt.scatter(x_test[pair[0]],
+                x_test[pair[1]],
+                c=y_test,
+                s=80,
+                marker='*',
+                edgecolors='k',
+                cmap=cm_dark,
+                label=u'测试集')
+    plt.xlabel(iris_feature[pair[0]], fontsize=12)
+    plt.ylabel(iris_feature[pair[1]], fontsize=12)
+    # plt.legend(loc='upper right', fancybox=True, framealpha=0.3)
+    plt.xlim(x1_min, x1_max)
+    plt.ylim(x2_min, x2_max)
+    plt.grid(b=True, ls=':', color='#606060')
+plt.suptitle(u'决策树对鸢尾花数据两特征组合的分类结果', fontsize=15)
+plt.tight_layout(1, rect=(0, 0, 1, 0.94))  # (left, bottom, right, top)
+plt.show()
+
+```
+
+    特征： 花萼长度  +  花萼宽度
+    	训练集准确率: 85.7143%
+    	测试集准确率: 71.1111%
+    
+    特征： 花萼长度  +  花瓣长度
+    	训练集准确率: 96.1905%
+    	测试集准确率: 91.1111%
+    
+    特征： 花萼长度  +  花瓣宽度
+    	训练集准确率: 96.1905%
+    	测试集准确率: 86.6667%
+    
+    特征： 花萼宽度  +  花瓣长度
+    	训练集准确率: 97.1429%
+    	测试集准确率: 95.5556%
+    
+    特征： 花萼宽度  +  花瓣宽度
+    	训练集准确率: 96.1905%
+    	测试集准确率: 84.4444%
+    
+    特征： 花瓣长度  +  花瓣宽度
+    	训练集准确率: 98.0952%
+    	测试集准确率: 97.7778%
+    
+    
+
+    C:\Users\utsuk\AppData\Local\Temp\ipykernel_25000\2108356862.py:83: MatplotlibDeprecationWarning: Passing the pad parameter of tight_layout() positionally is deprecated since Matplotlib 3.3; the parameter will become keyword-only two minor releases later.
+      plt.tight_layout(1, rect=(0, 0, 1, 0.94))  # (left, bottom, right, top)
+    
+
+
+    
+![png](ML_files/ML_18_2.png)
+    
+
+
+#### 决策树-随机森林回归
+
+
+
+```python
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestRegressor
+
+N = 100
+
+# [-3,3)
+x = np.random.rand(N) * 6 - 3
+x.sort()
+y = np.sin(x) + np.random.randn(N) * 0.05
+x = x.reshape(-1, 1)
+
+print(x)
+print(y)
+
+# model = DecisionTreeRegressor(criterion='mse', max_depth=10)
+model = RandomForestRegressor(n_estimators=20, criterion='mse', max_depth=10)
+model.fit(x, y)
+x_test = np.linspace(-3, 3, 50).reshape(-1, 1)
+y_hat = model.predict(x_test)
+
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
+plt.figure(facecolor='w')
+plt.plot(x, y, 'r*', markersize=10, markeredgecolor='k', label='实际值')
+plt.plot(x_test, y_hat, 'g-', linewidth=2, label='预测值')
+plt.legend(loc='upper left', fontsize=12)
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.grid(b=True, ls=':', color='#606060')
+plt.title('决策树-随机森林回归', fontsize=15)
+plt.tight_layout(2)
+plt.show()
+
+# 比较决策树的深度影响
+depth = [2, 4, 6, 8, 10]
+clr = 'rgbmy'
+# model = DecisionTreeRegressor(criterion='mse')
+model = RandomForestRegressor(n_estimators=20, criterion='mse')
+plt.figure(facecolor='w')
+plt.plot(x, y, 'ro', ms=5, mec='k', label='实际值')
+x_test = np.linspace(-3, 3, 50).reshape(-1, 1)
+for d, c in zip(depth, clr):
+    model.set_params(max_depth=d)
+    model.fit(x, y)
+    y_hat = model.predict(x_test)
+    plt.plot(x_test,
+             y_hat,
+             '-',
+             color=c,
+             linewidth=2,
+             markeredgecolor='k',
+             label='Depth=%d' % d)
+plt.legend(loc='upper left', fontsize=12)
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.grid(b=True, ls=':', color='#606060')
+plt.title('决策树-随机森林回归', fontsize=15)
+plt.tight_layout(2)
+plt.show()
+```
+
+    [[-2.95013857]
+     [-2.91406777]
+     [-2.90709403]
+     [-2.90375999]
+     [-2.87745415]
+     [-2.86685497]
+     [-2.84070033]
+     [-2.81375697]
+     [-2.77943784]
+     [-2.77745775]
+     [-2.66347611]
+     [-2.65986762]
+     [-2.64217075]
+     [-2.63778267]
+     [-2.63639243]
+     [-2.60165162]
+     [-2.48896096]
+     [-2.43041085]
+     [-2.39941506]
+     [-2.38779079]
+     [-2.37856289]
+     [-2.32809632]
+     [-2.29426051]
+     [-2.25524085]
+     [-2.23914776]
+     [-2.16578847]
+     [-2.0055294 ]
+     [-1.9885004 ]
+     [-1.73199798]
+     [-1.61893958]
+     [-1.58908223]
+     [-1.54966302]
+     [-1.49074428]
+     [-1.46530843]
+     [-1.40362808]
+     [-1.3935955 ]
+     [-1.3928819 ]
+     [-1.37684247]
+     [-1.3377295 ]
+     [-1.33035029]
+     [-1.24577529]
+     [-1.15561278]
+     [-1.12976361]
+     [-0.92771942]
+     [-0.91536325]
+     [-0.83851709]
+     [-0.54828961]
+     [-0.54587447]
+     [-0.54456521]
+     [-0.51610774]
+     [-0.38078143]
+     [-0.27298529]
+     [-0.20898971]
+     [-0.20866835]
+     [ 0.01703485]
+     [ 0.03203468]
+     [ 0.06107388]
+     [ 0.07358949]
+     [ 0.07361575]
+     [ 0.10676155]
+     [ 0.15818226]
+     [ 0.20123638]
+     [ 0.3410772 ]
+     [ 0.45680655]
+     [ 0.52384169]
+     [ 0.65741898]
+     [ 0.68306354]
+     [ 0.82845395]
+     [ 0.83952908]
+     [ 0.99278446]
+     [ 1.04865533]
+     [ 1.16809926]
+     [ 1.21294563]
+     [ 1.44659934]
+     [ 1.47606149]
+     [ 1.48031876]
+     [ 1.54476213]
+     [ 1.54542061]
+     [ 1.60452852]
+     [ 1.85706958]
+     [ 1.9814776 ]
+     [ 2.07801869]
+     [ 2.08420295]
+     [ 2.08974078]
+     [ 2.09458999]
+     [ 2.21547939]
+     [ 2.2354401 ]
+     [ 2.2824592 ]
+     [ 2.39313024]
+     [ 2.4822308 ]
+     [ 2.5275393 ]
+     [ 2.56392915]
+     [ 2.63696096]
+     [ 2.65318554]
+     [ 2.66286196]
+     [ 2.67531127]
+     [ 2.69337798]
+     [ 2.78329004]
+     [ 2.83409465]
+     [ 2.94897411]]
+    [-0.16517944 -0.2651016  -0.26383212 -0.2408083  -0.21137157 -0.30729908
+     -0.24489794 -0.42738593 -0.39536257 -0.34762803 -0.55252409 -0.40629331
+     -0.47658554 -0.47459876 -0.50897455 -0.58933727 -0.57144697 -0.61564276
+     -0.76543047 -0.64009055 -0.79612233 -0.77625958 -0.82824783 -0.74228023
+     -0.6882561  -0.85479709 -0.9210133  -0.88824326 -0.94228155 -1.04205908
+     -1.01456756 -1.0150173  -1.01319155 -0.93942161 -1.0101109  -1.00949492
+     -1.00669835 -1.02762794 -0.90526463 -1.04873446 -0.98356087 -0.96345712
+     -0.90790305 -0.78617335 -0.8215092  -0.7756252  -0.62805774 -0.61416394
+     -0.55438357 -0.54877048 -0.24409899 -0.24654351 -0.22139215 -0.31816396
+     -0.00948097  0.03731195  0.07871564  0.06089414  0.091661    0.10130855
+      0.05916354  0.284293    0.32301758  0.47390064  0.43774825  0.59439442
+      0.62285701  0.78479681  0.7888438   0.91498224  0.91654605  0.84583033
+      0.90598404  0.99494553  1.05048367  0.97256267  1.04768316  1.09246729
+      0.92367061  0.97097779  0.98148804  0.86766162  0.87249721  0.81545132
+      0.80772307  0.75639662  0.73792794  0.75909448  0.71239606  0.63892773
+      0.6373865   0.53978973  0.47836416  0.47544309  0.4156747   0.46233128
+      0.43384357  0.32001956  0.2980857   0.16211947]
+    
+
+    C:\Users\utsuk\AppData\Local\Temp\ipykernel_25000\2984870596.py:33: MatplotlibDeprecationWarning: Passing the pad parameter of tight_layout() positionally is deprecated since Matplotlib 3.3; the parameter will become keyword-only two minor releases later.
+      plt.tight_layout(2)
+    
+
+
+    
+![png](ML_files/ML_20_2.png)
+    
+
+
+    C:\Users\utsuk\AppData\Local\Temp\ipykernel_25000\2984870596.py:60: MatplotlibDeprecationWarning: Passing the pad parameter of tight_layout() positionally is deprecated since Matplotlib 3.3; the parameter will become keyword-only two minor releases later.
+      plt.tight_layout(2)
+    
+
+
+    
+![png](ML_files/ML_20_4.png)
+    
+
+
+### 分类问题
+
+#### 逻辑回归
+
+##### 二分类
+
+
+
+```python
+import numpy as np
+import sklearn.linear_model as lm
+import matplotlib.pyplot as mp
+
+x = np.array([[3, 1], [2, 5], [1, 8], [6, 4],\
+              [5, 2], [3, 5], [4, 7], [4, -1]])
+y = np.array([0, 1, 1, 0, 0, 1, 1, 0])
+
+# 创建逻辑分类器对象
+# C参数：正则强度，越大拟合效果越小，通过调整该参数防止过拟合
+# solver参数：逻辑函数中指数的函数关系（liblinear表示线性关系）
+model = lm.LogisticRegression()
+model.fit(x, y)  # 训练
+
+# 预测
+test_x = np.array([[3, 9], [6, 1]])
+test_y = model.predict(test_x)  # 预测
+print(test_y)
+
+# 计算显示坐标的边界
+# x[:, 0].min()   x 中所有数组的第一位
+left = x[:, 0].min() - 1
+right = x[:, 0].max() + 1
+buttom = x[:, 1].min() - 1
+top = x[:, 1].max() + 1
+
+# 产生网格化矩阵
+grid_x, grid_y = np.meshgrid(np.arange(left, right, 0.01),
+                             np.arange(buttom, top, 0.01))
+
+print("grid_x.shape:", grid_x.shape)
+print("grid_y.shape:", grid_y.shape)
+
+# 将x,y坐标合并成两列
+mesh_x = np.column_stack((grid_x.ravel(), grid_y.ravel()))
+print("mesh_x.shape:", mesh_x.shape)
+
+# 根据每个点的xy坐标进行预测，并还原成二维形状
+mesh_z = model.predict(mesh_x)
+mesh_z = mesh_z.reshape(grid_x.shape)
+
+mp.figure('Logistic Regression', facecolor='lightgray')
+mp.title('Logistic Regression', fontsize=20)
+mp.xlabel('x', fontsize=14)
+mp.ylabel('y', fontsize=14)
+mp.tick_params(labelsize=10)
+mp.pcolormesh(grid_x, grid_y, mesh_z, cmap='gray', shading='auto')
+mp.scatter(
+    x[:, 0],  # 样本x坐标
+    x[:, 1],  # 样本y坐标
+    c=y,
+    cmap='brg',
+    s=80)
+mp.scatter(test_x[:, 0], test_x[:, 1], c="red", marker='s', s=80)
+mp.show()
+```
+
+    [1 0]
+    grid_x.shape: (1100, 700)
+    grid_y.shape: (1100, 700)
+    mesh_x.shape: (770000, 2)
+    
+
+
+    
+![png](ML_files/ML_22_1.png)
+    
+
+
+##### 多分类
+
+
+
+```python
+import numpy as np
+import sklearn.linear_model as lm
+import matplotlib.pyplot as mp
+
+# 输入
+x = np.array([[4, 7], [3.5, 8], [3.1, 6.2], [0.5, 1], [1, 2], [1.2, 1.9],
+              [6, 2], [5.7, 1.5], [5.4, 2.2]])
+# 输出（多个类别）
+y = np.array([0, 0, 0, 1, 1, 1, 2, 2, 2])
+
+# 创建逻辑分类器对象
+model = lm.LogisticRegression(C=200)  # 调整该值为1看效果
+model.fit(x, y)  # 训练
+
+# 坐标轴范围
+left = x[:, 0].min() - 1
+right = x[:, 0].max() + 1
+h = 0.005
+
+buttom = x[:, 1].min() - 1
+top = x[:, 1].max() + 1
+v = 0.005
+
+grid_x, grid_y = np.meshgrid(np.arange(left, right, h),
+                             np.arange(buttom, top, v))
+
+mesh_x = np.column_stack((grid_x.ravel(), grid_y.ravel()))
+mesh_z = model.predict(mesh_x)
+mesh_z = mesh_z.reshape(grid_x.shape)
+
+# 可视化
+mp.figure('Logistic Classification', facecolor='lightgray')
+mp.title('Logistic Classification', fontsize=20)
+mp.xlabel('x', fontsize=14)
+mp.ylabel('y', fontsize=14)
+mp.tick_params(labelsize=10)
+mp.pcolormesh(grid_x, grid_y, mesh_z, cmap='gray', shading='auto')
+mp.scatter(x[:, 0], x[:, 1], c=y, cmap='brg', s=80)
+mp.show()
+```
+
+
+    
+![png](ML_files/ML_24_0.png)
+    
+
+
+#### 支持向量机-SVM
+
+##### 核函数
+
+1. 线性
+
+2. 径向基-高斯
+
+
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
+from time import time
+
+iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
+path = 'iris_classification/iris.data'  # 数据文件路径
+data = pd.read_csv(path, header=None)
+x, y = data[[0, 1]], pd.Categorical(data[4]).codes
+x_train, x_test, y_train, y_test = train_test_split(x,
+                                                    y,
+                                                    random_state=1,
+                                                    test_size=0.4)
+
+# 分类器
+# svm_clf = svm.SVC(C=10, gamma=1, kernel='rbf', decision_function_shape='ovo')
+# svm_clf = svm.SVC(C=3, kernel='poly', degree=3)
+svm_clf = svm.SVC(C=3, kernel='linear')
+print('GridSearchCV begin...')
+t = time()
+clf = svm_clf
+# clf = GridSearchCV(svm_clf, param_grid={'gamma':np.logspace(-2, 2, 10), 'C':np.logspace(-2, 2, 10)}, cv=3)
+clf.fit(x_train, y_train.ravel())
+t_end = time()
+print('耗时：%d秒' % (t_end - t))
+# print('最优参数：', clf.best_params_)
+
+# 准确率
+print(clf.score(x_train, y_train))  # 精度
+print('训练集准确率：', accuracy_score(y_train, clf.predict(x_train)))
+print(clf.score(x_test, y_test))
+print('测试集准确率：', accuracy_score(y_test, clf.predict(x_test)))
+
+# decision_function
+print(x_train[:5])
+print('decision_function:\n', clf.decision_function(x_train))
+print('\npredict:\n', clf.predict(x_train))
+
+# 画图
+x1_min, x2_min = x.min()
+x1_max, x2_max = x.max()
+x1, x2 = np.mgrid[x1_min:x1_max:300j, x2_min:x2_max:300j]  # 生成网格采样点
+grid_test = np.stack((x1.flat, x2.flat), axis=1)  # 测试点
+grid_hat = clf.predict(grid_test)  # 预测分类值
+grid_hat = grid_hat.reshape(x1.shape)  # 使之与输入的形状相同
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
+
+cm_light = mpl.colors.ListedColormap(['#A0FFA0', '#FFA0A0', '#A0A0FF'])
+cm_dark = mpl.colors.ListedColormap(['g', 'r', 'b'])
+plt.figure(facecolor='w')
+plt.pcolormesh(x1, x2, grid_hat, cmap=cm_light, shading='auto')
+plt.scatter(x[0], x[1], c=y, edgecolors='k', s=50, cmap=cm_dark)  # 样本
+plt.scatter(x_test[0], x_test[1], s=120, facecolors='none',
+            zorder=10)  # 圈中测试集样本
+plt.xlabel(iris_feature[0], fontsize=13)
+plt.ylabel(iris_feature[1], fontsize=13)
+plt.xlim(x1_min, x1_max)
+plt.ylim(x2_min, x2_max)
+plt.title('鸢尾花SVM二特征分类', fontsize=16)
+plt.grid(b=True, ls=':')
+plt.tight_layout(pad=1.5)
+plt.show()
+```
+
+    GridSearchCV begin...
+    耗时：0秒
+    0.7888888888888889
+    训练集准确率： 0.7888888888888889
+    0.7833333333333333
+    测试集准确率： 0.7833333333333333
+           0    1
+    11   4.8  3.4
+    113  5.7  2.5
+    123  6.3  2.7
+    12   4.8  3.0
+    2    4.7  3.2
+    decision_function:
+     [[ 2.27077043  0.77466667 -0.23050192]
+     [-0.26084184  2.25751125  1.0560141 ]
+     [-0.28293421  2.25843306  1.22796515]
+     [ 2.24308998  0.92588576 -0.2355186 ]
+     [ 2.26643883  0.80879936 -0.24170145]
+     [-0.28069428  1.23581332  2.24817619]
+     [ 2.28018898  0.76457517 -0.24714914]
+     [-0.25832462  1.21350955  2.20811726]
+     [-0.27289547  1.20094518  2.249947  ]
+     [-0.28479994  1.2318958   2.26058535]
+     [-0.23449614  2.22389578  1.08207816]
+     [-0.27824598  1.19362022  2.2618816 ]
+     [-0.24940836  1.20624284  2.19142888]
+     [ 2.2732283  -0.2577432   0.82271427]
+     [-0.2872948   2.27977562  1.1680301 ]
+     [-0.28016055  1.24346593  2.23969255]
+     [-0.28069428  1.23581332  2.24817619]
+     [-0.17539161  2.25364746  0.77515212]
+     [-0.25325305  1.14281388  2.23566431]
+     [-0.2421088   2.25159667  0.90072452]
+     [ 2.24374936 -0.23761503  0.93581753]
+     [ 2.24150985  0.87804111 -0.2241573 ]
+     [ 2.28041834 -0.27382086  0.86293615]
+     [-0.27824598  1.19362022  2.2618816 ]
+     [ 2.27361996  0.84008337 -0.26180365]
+     [-0.26919985  2.24943754  1.18347413]
+     [-0.28629221  2.26101768  1.23745359]
+     [-0.23808639  1.19803786  2.16960812]
+     [ 2.24670891 -0.21840299  0.83780678]
+     [ 2.23817757  0.82105098 -0.19112107]
+     [-0.2549617   2.24213564  1.1247623 ]
+     [ 2.24150985  0.87804111 -0.2241573 ]
+     [-0.30409023  1.27536123  2.28319903]
+     [-0.27073104  1.23503534  2.2197061 ]
+     [-0.30441277  1.26883084  2.28803158]
+     [-0.28752494  1.24411663  2.25991942]
+     [-0.29292012  2.28000741  1.22212062]
+     [-0.23176304  1.04104242  2.22722296]
+     [-0.28694643  1.15125962  2.28088265]
+     [-0.19956441  2.19653578  1.01742803]
+     [ 2.26878977 -0.27918692  1.16597018]
+     [-0.2549617   2.24213564  1.1247623 ]
+     [ 2.18519501  1.23494087 -0.26146238]
+     [-0.2512831   2.2597216   0.89408741]
+     [-0.29066599  1.240849    2.26933123]
+     [ 2.25729439 -0.2129225   0.79411601]
+     [-0.29441953  1.26382422  2.26345809]
+     [ 2.26377705 -0.22976306  0.79617407]
+     [ 2.27077043  0.77466667 -0.23050192]
+     [-0.2445374   1.07681969  2.23683943]
+     [-0.21840757  2.21786592  1.00447438]
+     [-0.28524498  1.22203776  2.26581127]
+     [ 2.24947915  0.81045802 -0.20787766]
+     [ 2.2684482  -0.24915018  0.81973595]
+     [-0.20907334  1.12013512  2.17603067]
+     [ 2.26728139  0.82893904 -0.24984081]
+     [-0.2549617   2.24213564  1.1247623 ]
+     [ 2.25207771  0.85867453 -0.23431088]
+     [-0.28069428  1.23581332  2.24817619]
+     [ 1.05055292  2.22662497 -0.23240122]
+     [ 2.2722284   0.7997718  -0.24896247]
+     [-0.26723747  1.19201787  2.24286157]
+     [ 2.27827649  0.82682975 -0.26630655]
+     [-0.17333043  2.16553945  1.02939988]
+     [ 2.26890439  0.89311197 -0.26243597]
+     [-0.2512831   2.2597216   0.89408741]
+     [-0.23341849  2.27309387  0.7709214 ]
+     [ 2.25617562 -0.22437834  0.81410784]
+     [ 2.22986475  0.96247553 -0.22562355]
+     [ 0.93771503  2.24006469 -0.23365567]
+     [ 2.28631446 -0.25590025  0.75474384]
+     [-0.23808639  1.19803786  2.16960812]
+     [-0.2646401   1.23019768  2.20613126]
+     [ 2.25729439 -0.2129225   0.79411601]
+     [-0.28479994  1.2318958   2.26058535]
+     [-0.22087216  2.20491832  1.08971052]
+     [-0.29260626  2.28238001  1.20719635]
+     [-0.29101034  1.23272406  2.27341138]
+     [-0.2549617   2.24213564  1.1247623 ]
+     [ 2.19974418 -0.17699012  0.91119813]
+     [ 2.21209755  1.01040036 -0.21350121]
+     [-0.27849238  2.26059076  1.19977637]
+     [-0.26997469  2.24280567  1.20408124]
+     [-0.29874557  1.25977449  2.27874043]
+     [-0.25377271  2.24886239  1.06528288]
+     [-0.27961589  2.2500049   1.22933155]
+     [-0.27219081  1.21466357  2.24182934]
+     [-0.2884762   2.2710352   1.22512174]
+     [-0.28479994  1.2318958   2.26058535]
+     [ 2.24150985  0.87804111 -0.2241573 ]]
+    
+    predict:
+     [0 1 1 0 0 2 0 2 2 2 1 2 2 0 1 2 2 1 2 1 0 0 0 2 0 1 1 2 0 0 1 0 2 2 2 2 1
+     2 2 1 0 1 0 1 2 0 2 0 0 2 1 2 0 0 2 0 1 0 2 1 0 2 0 1 0 1 1 0 0 1 0 2 2 0
+     2 1 1 2 1 0 0 1 1 2 1 1 2 1 2 0]
+    
+
+
+    
+![png](ML_files/ML_26_1.png)
+    
+
+
+
+```python
+import numpy as np
+from sklearn import svm
+from scipy import stats
+from sklearn.metrics import accuracy_score
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+
+def extend(a, b, r=0.01):
+    return a * (1 + r) - b * r, -a * r + b * (1 + r)
+
+
+np.random.seed(0)
+N = 200
+x = np.empty((4 * N, 2))
+means = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
+sigmas = [
+    np.eye(2), 2 * np.eye(2),
+    np.diag((1, 2)),
+    np.array(((3, 2), (2, 3)))
+]
+for i in range(4):
+    mn = stats.multivariate_normal(means[i], sigmas[i] * 0.07)
+    x[i * N:(i + 1) * N, :] = mn.rvs(N)
+a = np.array((0, 1, 2, 3)).reshape((-1, 1))
+y = np.tile(a, N).flatten()
+clf = svm.SVC(C=1, kernel='rbf', gamma=1, decision_function_shape='ovo')
+# clf = svm.SVC(C=1, kernel='linear', decision_function_shape='ovr')
+clf.fit(x, y)
+y_hat = clf.predict(x)
+acc = accuracy_score(y, y_hat)
+np.set_printoptions(suppress=True)
+print('预测正确的样本个数：%d，正确率：%.2f%%' % (round(acc * 4 * N), 100 * acc))
+# decision_function
+print(clf.decision_function(x))
+print(y_hat)
+
+x1_min, x2_min = np.min(x, axis=0)
+x1_max, x2_max = np.max(x, axis=0)
+x1_min, x1_max = extend(x1_min, x1_max)
+x2_min, x2_max = extend(x2_min, x2_max)
+x1, x2 = np.mgrid[x1_min:x1_max:500j, x2_min:x2_max:500j]
+x_test = np.stack((x1.flat, x2.flat), axis=1)
+y_test = clf.predict(x_test)
+y_test = y_test.reshape(x1.shape)
+cm_light = mpl.colors.ListedColormap(
+    ['#FF8080', '#80FF80', '#8080FF', '#F0F080'])
+cm_dark = mpl.colors.ListedColormap(['r', 'g', 'b', 'y'])
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
+plt.figure(facecolor='w')
+plt.pcolormesh(x1, x2, y_test, cmap=cm_light, shading='auto')
+plt.contour(x1, x2, y_test, levels=(0, 1, 2), colors='k', linestyles='--')
+plt.scatter(x[:, 0],
+            x[:, 1],
+            s=20,
+            c=y,
+            cmap=cm_dark,
+            edgecolors='k',
+            alpha=0.7)
+plt.xlabel('$X_1$', fontsize=11)
+plt.ylabel('$X_2$', fontsize=11)
+plt.xlim((x1_min, x1_max))
+plt.ylim((x2_min, x2_max))
+plt.grid(b=True)
+plt.tight_layout(pad=2.5)
+plt.title('SVM多分类方法：One/One or One/Other', fontsize=14)
+plt.show()
+
+```
+
+    预测正确的样本个数：793，正确率：99.12%
+    [[ 1.30403817  1.18371967  1.61069453  0.53379555  0.10282667 -0.6639782 ]
+     [ 1.20484592  1.00041165  1.13023042  0.32840742  0.16888308 -0.33559223]
+     [ 1.28448754  1.15305262  1.24310512  0.59725054 -0.31474389 -0.97622623]
+     ...
+     [-0.23584035 -0.08224918 -1.09483656  0.1554822  -1.12200744 -1.12840424]
+     [ 0.2447751   0.34444513 -1.55255237  0.17064062 -1.24348982 -1.41973039]
+     [-0.03070327 -0.15566364 -1.9254549  -0.09600454 -1.23897289 -1.44257329]]
+    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1
+     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+     1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2
+     2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+     2 2 2 2 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+     2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+     2 2 2 2 2 2 2 2 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+     2 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+     2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+     3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+     3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+     3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+     3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+     3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3]
+    
+
+
+    
+![png](ML_files/ML_27_1.png)
+    
+
+
+### 聚类问题
+
+#### K-Means-与衡量指标
+
+
+
+```python
+import numpy as np
+import matplotlib.colors
+import matplotlib.pyplot as plt
+import sklearn.datasets as ds
+from sklearn.metrics import homogeneity_score, completeness_score, v_measure_score, adjusted_mutual_info_score,\
+    adjusted_rand_score, silhouette_score
+from sklearn.cluster import KMeans
+from mpl_toolkits.mplot3d import Axes3D
+
+
+def expand(a, b):
+    d = (b - a) * 0.1
+    return a - d, b + d
+
+
+N = 400
+centers = 4
+data, y = ds.make_blobs(N, n_features=2, centers=centers, random_state=2)
+data2, y2 = ds.make_blobs(N,
+                          n_features=2,
+                          centers=centers,
+                          cluster_std=(1, 2.5, 0.5, 2),
+                          random_state=2)
+data3 = np.vstack(
+    (data[y == 0][:], data[y == 1][:50], data[y == 2][:20], data[y == 3][:5]))
+y3 = np.array([0] * 100 + [1] * 50 + [2] * 20 + [3] * 5)
+m = np.array(((1, 1), (1, 3)))
+data_r = data.dot(m)
+
+matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+matplotlib.rcParams['axes.unicode_minus'] = False
+cm = matplotlib.colors.ListedColormap(list('rgbm'))
+data_list = data, data, data_r, data_r, data2, data2, data3, data3
+y_list = y, y, y, y, y2, y2, y3, y3
+titles = '原始数据', 'KMeans++聚类', '旋转后数据', '旋转后KMeans++聚类',\
+          '方差不相等数据', '方差不相等KMeans++聚类', '数量不相等数据', '数量不相等KMeans++聚类'
+
+model = KMeans(n_clusters=4, init='k-means++', n_init=5)
+fig = plt.figure(figsize=(8, 9), facecolor='w')
+for i, (x, y, title) in enumerate(zip(data_list, y_list, titles), start=1):
+    # plt.subplot(4, 2, i)
+    ax = fig.add_subplot(4, 2, i)
+    plt.title(title)
+    if i % 2 == 1:
+        y_pred = y
+    else:
+        y_pred = model.fit_predict(x)
+    print(i)
+    print('Homogeneity:', homogeneity_score(y, y_pred))
+    print('completeness:', completeness_score(y, y_pred))
+    print('V measure:', v_measure_score(y, y_pred))
+    print('AMI:', adjusted_mutual_info_score(y, y_pred))
+    print('ARI:', adjusted_rand_score(y, y_pred))
+    print('Silhouette:', silhouette_score(x, y_pred), '\n')
+    ax.scatter(x[:, 0], x[:, 1], s=10, c=y_pred, cmap=cm, edgecolors='none')
+    ax.grid(b=True, ls=':')
+plt.tight_layout(2, rect=(0, 0, 1, 0.95))
+plt.suptitle('数据分布对KMeans聚类的影响', fontsize=18)
+plt.show()
+
+```
+
+    1
+    Homogeneity: 1.0
+    completeness: 1.0
+    V measure: 1.0
+    AMI: 1.0
+    ARI: 1.0
+    Silhouette: 0.616436816839852 
+    
+    2
+    Homogeneity: 0.9898828240244267
+    completeness: 0.9899006758819153
+    V measure: 0.9898917498726852
+    AMI: 0.9898081557479033
+    ARI: 0.9933165272203728
+    Silhouette: 0.6189656317733315 
+    
+    3
+    Homogeneity: 1.0
+    completeness: 1.0
+    V measure: 1.0
+    AMI: 1.0
+    ARI: 1.0
+    Silhouette: 0.5275987244664399 
+    
+    4
+    Homogeneity: 0.7296158940840607
+    completeness: 0.7315285272632114
+    V measure: 0.7305709588584066
+    AMI: 0.7283397010755561
+    ARI: 0.6783811042853299
+    Silhouette: 0.5366236044449266 
+    
+    5
+    Homogeneity: 1.0
+    completeness: 1.0
+    V measure: 1.0
+    AMI: 1.0
+    ARI: 1.0
+    Silhouette: 0.4790725752982868 
+    
+    6
+    Homogeneity: 0.7449364376693913
+    completeness: 0.7755445167472191
+    V measure: 0.7599323988656883
+    AMI: 0.757903292819801
+    ARI: 0.7113213508090338
+    Silhouette: 0.5737260449304202 
+    
+    7
+    Homogeneity: 1.0
+    completeness: 1.0
+    V measure: 1.0
+    AMI: 1.0
+    ARI: 1.0
+    Silhouette: 0.5975066093204152 
+    
+    8
+    Homogeneity: 0.9776347312784609
+    completeness: 0.9728632742060752
+    V measure: 0.975243166591057
+    AMI: 0.9745709993295113
+    ARI: 0.9906840043816505
+    Silhouette: 0.6013877858619149 
+    
+    
+
+    C:\Users\utsuk\AppData\Local\Temp\ipykernel_28356\867049078.py:57: MatplotlibDeprecationWarning: Passing the pad parameter of tight_layout() positionally is deprecated since Matplotlib 3.3; the parameter will become keyword-only two minor releases later.
+      plt.tight_layout(2, rect=(0, 0, 1, 0.95))
+    
+
+
+    
+![png](ML_files/ML_29_2.png)
+    
+
+
+#### 层次聚类
+
+
+
+```python
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.neighbors import kneighbors_graph
+import sklearn.datasets as ds
+import warnings
+
+
+def expand(a, b, r):
+    d = (b - a) * r
+    return a - d, b + d
+
+
+if __name__ == '__main__':
+    warnings.filterwarnings(action='ignore', category=UserWarning)
+    np.set_printoptions(suppress=True)
+    np.random.seed(0)
+    n_clusters = 4
+    N = 400
+    data1, y1 = ds.make_blobs(n_samples=N,
+                              n_features=2,
+                              centers=((-1, 1), (1, 1), (1, -1), (-1, -1)),
+                              cluster_std=(0.1, 0.2, 0.3, 0.4),
+                              random_state=0)
+    data1 = np.array(data1)
+    n_noise = int(0.1 * N)
+    r = np.random.rand(n_noise, 2)
+    data_min1, data_min2 = np.min(data1, axis=0)
+    data_max1, data_max2 = np.max(data1, axis=0)
+    r[:, 0] = r[:, 0] * (data_max1 - data_min1) + data_min1
+    r[:, 1] = r[:, 1] * (data_max2 - data_min2) + data_min2
+    data1_noise = np.concatenate((data1, r), axis=0)
+    y1_noise = np.concatenate((y1, [4] * n_noise))
+
+    data2, y2 = ds.make_moons(n_samples=N, noise=.05)
+    data2 = np.array(data2)
+    n_noise = int(0.1 * N)
+    r = np.random.rand(n_noise, 2)
+    data_min1, data_min2 = np.min(data2, axis=0)
+    data_max1, data_max2 = np.max(data2, axis=0)
+    r[:, 0] = r[:, 0] * (data_max1 - data_min1) + data_min1
+    r[:, 1] = r[:, 1] * (data_max2 - data_min2) + data_min2
+    data2_noise = np.concatenate((data2, r), axis=0)
+    y2_noise = np.concatenate((y2, [3] * n_noise))
+
+    mpl.rcParams['font.sans-serif'] = ['SimHei']
+    mpl.rcParams['axes.unicode_minus'] = False
+
+    cm = mpl.colors.ListedColormap(['r', 'g', 'b', 'm', 'c'])
+    plt.figure(figsize=(10, 8), facecolor='w')
+    plt.cla()
+    linkages = ("ward", "complete", "average")
+    for index, (n_clusters, data, y) in enumerate(
+        ((4, data1, y1), (4, data1_noise, y1_noise), (2, data2, y2),
+         (2, data2_noise, y2_noise))):
+        plt.subplot(4, 4, 4 * index + 1)
+        plt.scatter(data[:, 0], data[:, 1], c=y, s=12, edgecolors='k', cmap=cm)
+        plt.title('Prime', fontsize=12)
+        plt.grid(b=True, ls=':')
+        data_min1, data_min2 = np.min(data, axis=0)
+        data_max1, data_max2 = np.max(data, axis=0)
+        plt.xlim(expand(data_min1, data_max1, 0.05))
+        plt.ylim(expand(data_min2, data_max2, 0.05))
+
+        connectivity = kneighbors_graph(data,
+                                        n_neighbors=7,
+                                        mode='distance',
+                                        metric='minkowski',
+                                        p=2,
+                                        include_self=True)
+        connectivity = 0.5 * (connectivity + connectivity.T)
+        for i, linkage in enumerate(linkages):
+            ac = AgglomerativeClustering(n_clusters=n_clusters,
+                                         affinity='euclidean',
+                                         connectivity=connectivity,
+                                         linkage=linkage)
+            ac.fit(data)
+            y = ac.labels_
+            plt.subplot(4, 4, i + 2 + 4 * index)
+            plt.scatter(data[:, 0],
+                        data[:, 1],
+                        c=y,
+                        s=12,
+                        edgecolors='k',
+                        cmap=cm)
+            plt.title(linkage, fontsize=12)
+            plt.grid(b=True, ls=':')
+            plt.xlim(expand(data_min1, data_max1, 0.05))
+            plt.ylim(expand(data_min2, data_max2, 0.05))
+    plt.suptitle('层次聚类的不同合并策略', fontsize=15)
+    plt.tight_layout(0.5, rect=(0, 0, 1, 0.95))
+    plt.show()
+
+```
+
+
+    
+![png](ML_files/ML_31_0.png)
     
 
 
@@ -699,7 +1720,6 @@ print("训练完成.")
 with open('linear_model.pkl', 'wb') as f:
     pickle.dump(model, f)
     print("保存模型完成.")
-
 
 ######################### 加载模型 #########################
 # 上面通过训练数据x,y 训练好了 x -> y 的线性回归模型
@@ -733,7 +1753,7 @@ mp.show()
 
 
     
-![png](ML_files/ML_18_1.png)
+![png](ML_files/ML_33_1.png)
     
 
 
@@ -768,7 +1788,35 @@ plt.show()
 
 
     
-![png](ML_files/ML_20_0.png)
+![png](ML_files/ML_35_0.png)
+    
+
+
+### 基尼系数与-ln
+
+
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+eps = 1e-4
+p = np.linspace(eps, 1 - eps, 100)
+h = -(1 - p) * np.log2(1 - p) - p * np.log2(p)
+gini = 2 * (1 - p) * p
+
+plt.plot(p, gini, 'r-', lw=3)
+plt.plot(p, h / 2, 'g-', lw=3)
+plt.title('Gini(p) / Ln(p)', fontsize=16)
+plt.xlabel('p', fontsize=14)
+plt.ylabel('H', fontsize=14)
+plt.legend(['Gini', 'Ln'], loc='best', fontsize=14)
+plt.show()
+```
+
+
+    
+![png](ML_files/ML_37_0.png)
     
 
 
@@ -777,4 +1825,6 @@ plt.show()
 ## 借物表
 
 <a name='cite_note-1' href='#cite_ref-1'>[1]</a>: https://discover304.top/
+
+<a name='cite_note-2' href='#cite_ref-2'>[2]</a>: [【上海交大】【腾讯】强强联合 机器学习+深度学习](https://www.bilibili.com/video/BV16L411w7oQ?p=6)
 
