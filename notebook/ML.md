@@ -1,5 +1,5 @@
 ---
-title: 👀Code-4-ML-Learning
+title: 👀Code-4-Machine-Learning
 password: ""
 tags:
   - 人工智能
@@ -12,8 +12,6 @@ date: 2022-04-11 15:07:22
 cover: https://www.helloimg.com/images/2022/04/07/RsEzqc.png
 top_img:
 ---
-
-# Code-4-ML-Learning
 
 <!--
  * @?: *********************************************************************
@@ -1441,6 +1439,142 @@ plt.show()
     
 
 
+#### 朴素贝叶斯
+
+
+
+```python
+class NBClassify(object):
+    def __init__(self, fillNa=1):
+        self.fillNa = 1
+        pass
+
+    def train(self, trainSet):
+        # 计算每种类别的概率
+        # 保存所有tag的所有种类，及它们出现的频次
+        dictTag = {}
+        for subTuple in trainSet:
+            dictTag[str(
+                subTuple[1])] = 1 if str(subTuple[1]) not in dictTag.keys(
+                ) else dictTag[str(subTuple[1])] + 1
+        # 保存每个tag本身的概率
+        tagProbablity = {}
+        totalFreq = sum([value for value in dictTag.values()])
+        for key, value in dictTag.items():
+            tagProbablity[key] = value / totalFreq
+        # print(tagProbablity)
+        self.tagProbablity = tagProbablity
+        ##############################################################################
+        # 计算特征的条件概率
+        # 保存特征属性基本信息{特征1:{值1:出现5次, 值2:出现1次}, 特征2:{值1:出现1次, 值2:出现5次}}
+        dictFeaturesBase = {}
+        for subTuple in trainSet:
+            for key, value in subTuple[0].items():
+                if key not in dictFeaturesBase.keys():
+                    dictFeaturesBase[key] = {value: 1}
+                else:
+                    if value not in dictFeaturesBase[key].keys():
+                        dictFeaturesBase[key][value] = 1
+                    else:
+                        dictFeaturesBase[key][value] += 1
+        # dictFeaturesBase = {
+        # '职业': {'农夫': 1, '教师': 2, '建筑工人': 2, '护士': 1},
+        # '症状': {'打喷嚏': 3, '头痛': 3}
+        # }
+        dictFeatures = {}.fromkeys([key for key in dictTag])
+        for key in dictFeatures.keys():
+            dictFeatures[key] = {}.fromkeys([key for key in dictFeaturesBase])
+        for key, value in dictFeatures.items():
+            for subkey in value.keys():
+                value[subkey] = {}.fromkeys(
+                    [x for x in dictFeaturesBase[subkey].keys()])
+        # dictFeatures = {
+        #  '感冒 ': {'症状': {'打喷嚏': None, '头痛': None}, '职业': {'护士': None, '农夫': None, '建筑工人': None, '教师': None}},
+        #  '脑震荡': {'症状': {'打喷嚏': None, '头痛': None}, '职业': {'护士': None, '农夫': None, '建筑工人': None, '教师': None}},
+        #  '过敏 ': {'症状': {'打喷嚏': None, '头痛': None}, '职业': {'护士': None, '农夫': None, '建筑工人': None, '教师': None}}
+        #  }
+        # initialise dictFeatures
+        for subTuple in trainSet:
+            for key, value in subTuple[0].items():
+                dictFeatures[subTuple[1]][key][value] = 1 if dictFeatures[
+                    subTuple[1]][key][value] == None else dictFeatures[
+                        subTuple[1]][key][value] + 1
+        # print(dictFeatures)
+        # 将驯良样本中没有的项目，由None改为一个非常小的数值，表示其概率极小而并非是零
+        for tag, featuresDict in dictFeatures.items():
+            for featureName, fetureValueDict in featuresDict.items():
+                for featureKey, featureValues in fetureValueDict.items():
+                    if featureValues == None:
+                        fetureValueDict[featureKey] = 1
+        # 由特征频率计算特征的条件概率P(feature|tag)
+        for tag, featuresDict in dictFeatures.items():
+            for featureName, fetureValueDict in featuresDict.items():
+                totalCount = sum(
+                    [x for x in fetureValueDict.values() if x != None])
+                for featureKey, featureValues in fetureValueDict.items():
+                    fetureValueDict[
+                        featureKey] = featureValues / totalCount if featureValues != None else None
+        self.featuresProbablity = dictFeatures
+        ##############################################################################
+    def classify(self, featureDict):
+        resultDict = {}
+        # 计算每个tag的条件概率
+        for key, value in self.tagProbablity.items():
+            iNumList = []
+            for f, v in featureDict.items():
+                if self.featuresProbablity[key][f][v]:
+                    iNumList.append(self.featuresProbablity[key][f][v])
+            conditionPr = 1
+            for iNum in iNumList:
+                conditionPr *= iNum
+            resultDict[key] = value * conditionPr
+        # 对比每个tag的条件概率的大小
+        resultList = sorted(resultDict.items(),
+                            key=lambda x: x[1],
+                            reverse=True)
+        return resultList[0][0]
+
+
+if __name__ == '__main__':
+    trainSet = [
+        ({
+            "症状": "打喷嚏",
+            "职业": "护士"
+        }, "感冒 "),
+        ({
+            "症状": "打喷嚏",
+            "职业": "农夫"
+        }, "过敏 "),
+        ({
+            "症状": "头痛",
+            "职业": "建筑工人"
+        }, "脑震荡"),
+        ({
+            "症状": "头痛",
+            "职业": "建筑工人"
+        }, "感冒 "),
+        ({
+            "症状": "打喷嚏",
+            "职业": "教师"
+        }, "感冒 "),
+        ({
+            "症状": "头痛",
+            "职业": "教师"
+        }, "脑震荡"),
+    ]
+    monitor = NBClassify()
+    # trainSet is something like that [(featureDict, tag), ]
+    monitor.train(trainSet)
+    # 打喷嚏的建筑工人
+    # 请问他患上感冒的概率有多大？
+    result = monitor.classify({"症状": "打喷嚏", "职业": "建筑工人"})
+    print(result)
+
+```
+
+    感冒 
+    
+
 ### 聚类问题
 
 #### K-Means-与衡量指标
@@ -1582,7 +1716,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_29_2.png)
+![png](ML_files/ML_31_2.png)
     
 
 
@@ -1689,9 +1823,91 @@ if __name__ == '__main__':
 
 
     
-![png](ML_files/ML_31_0.png)
+![png](ML_files/ML_33_0.png)
     
 
+
+### 降维问题
+
+#### 缺失值比率
+
+
+
+```python
+# import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# read the data
+train = pd.read_csv("./降维问题/train_v9rqX0R.csv")
+
+# checking the percentage of missing values in each variable
+# 数据完整率 = (空数 / 所有数) * 100
+a = train.isnull().sum() / len(train) * 100
+
+# saving column names in a variable
+variable = []
+for i in range(0, 12):
+    if a[i] <= 20:  #setting the threshold as 20%
+        variable.append(train.columns[i])
+
+# 缺失率大于阈值的列
+print(variable)
+```
+
+    ['Item_Identifier', 'Item_Weight', 'Item_Fat_Content', 'Item_Visibility', 'Item_Type', 'Item_MRP', 'Outlet_Identifier', 'Outlet_Establishment_Year', 'Outlet_Location_Type', 'Outlet_Type', 'Item_Outlet_Sales']
+    
+
+#### 低方差过滤
+
+
+
+```python
+# import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# read the data
+train = pd.read_csv("./降维问题/train_v9rqX0R.csv")
+
+# 填充空项
+train['Item_Weight'].fillna(train['Item_Weight'].median(), inplace=True)
+train['Outlet_Size'].fillna(train['Outlet_Size'].mode()[0], inplace=True)
+
+# 填充后的缺失率
+print(train.isnull().sum() / len(train) * 100)
+
+numeric = train[[
+    'Item_Weight', 'Item_Visibility', 'Item_MRP', 'Outlet_Establishment_Year'
+]]
+var = numeric.var()
+numeric = numeric.columns
+variable = []
+for i in range(0, len(var)):
+    if var[i] >= 10:  #setting the threshold as 10%
+        variable.append(numeric[i])
+
+print(variable)
+
+```
+
+    Item_Identifier              0.0
+    Item_Weight                  0.0
+    Item_Fat_Content             0.0
+    Item_Visibility              0.0
+    Item_Type                    0.0
+    Item_MRP                     0.0
+    Outlet_Identifier            0.0
+    Outlet_Establishment_Year    0.0
+    Outlet_Size                  0.0
+    Outlet_Location_Type         0.0
+    Outlet_Type                  0.0
+    Item_Outlet_Sales            0.0
+    dtype: float64
+    ['Item_Weight', 'Item_MRP', 'Outlet_Establishment_Year']
+    
 
 ## 代码相关
 
@@ -1753,7 +1969,7 @@ mp.show()
 
 
     
-![png](ML_files/ML_33_1.png)
+![png](ML_files/ML_39_1.png)
     
 
 
@@ -1788,7 +2004,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_35_0.png)
+![png](ML_files/ML_41_0.png)
     
 
 
@@ -1816,7 +2032,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_37_0.png)
+![png](ML_files/ML_43_0.png)
     
 
 
@@ -1827,4 +2043,6 @@ plt.show()
 <a name='cite_note-1' href='#cite_ref-1'>[1]</a>: https://discover304.top/
 
 <a name='cite_note-2' href='#cite_ref-2'>[2]</a>: [【上海交大】【腾讯】强强联合 机器学习+深度学习](https://www.bilibili.com/video/BV16L411w7oQ?p=6)
+
+<a name='cite_note-3' href='#cite_ref-3'>[3]</a>: [The Ultimate Guide to 12 Dimensionality Reduction Techniques (with Python codes)](https://www.analyticsvidhya.com/blog/2018/08/dimensionality-reduction-techniques-python/)
 
