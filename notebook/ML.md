@@ -5,6 +5,7 @@ tags:
   - 人工智能
   - 机器学习
   - 信息论
+  - python
 katex: false
 comments: true
 aside: true
@@ -27,7 +28,7 @@ top_img:
 
 此文为其他文章的代码部分:
 
-> [🐊All-about-AI](../../../AI/AI)
+> [🥵硬啃-Machine-Learning](../../../../python/AI/ML)
 
 也提供了 notebook 形式: [代码地址](https://github.com/Weidows-projects/public-post/blob/main/notebook/ML/ML.ipynb)
 
@@ -152,6 +153,7 @@ print(nor_samples)  # 打印结果
     
 
 ### 二值化
+
 
 
 ```python
@@ -296,7 +298,6 @@ for i in range(1, n_epochs + 1):
     w0.append(w0[-1] - (d0 * l_rate))
     w1.append(w1[-1] - (d1 * l_rate))
 
-
 ###################### 训练过程可视化 ######################
 ## 损失函数收敛过程
 w0 = np.array(w0[:-1])
@@ -332,7 +333,7 @@ flat_w0, flat_w1 = grid_w0.ravel(), grid_w1.ravel()  # 二维矩阵扁平化
 loss_metrix = train_y.reshape(-1, 1)  # 生成误差矩阵（-1,1）表示自动计算维度
 outer = np.outer(train_x, flat_w1)  # 求外积（train_x和flat_w1元素两两相乘的新矩阵）
 # 计算损失：((w0 + w1*x - y)**2)/2
-flat_loss = (((flat_w0 + outer - loss_metrix) ** 2).sum(axis=0)) / 2
+flat_loss = (((flat_w0 + outer - loss_metrix)**2).sum(axis=0)) / 2
 grid_loss = flat_loss.reshape(grid_w0.shape)
 
 mp.figure('Loss Function')
@@ -341,11 +342,17 @@ mp.title('Loss Function', fontsize=14)
 ax.set_xlabel('w0', fontsize=14)
 ax.set_ylabel('w1', fontsize=14)
 ax.set_zlabel('loss', fontsize=14)
-ax.plot_surface(grid_w0, grid_w1, grid_loss, rstride=10, cstride=10, cmap='jet')
+ax.plot_surface(grid_w0,
+                grid_w1,
+                grid_loss,
+                rstride=10,
+                cstride=10,
+                cmap='jet')
 ax.plot(w0, w1, losses, 'o-', c='orangered', label='BGD', zorder=5)
 mp.legend(loc='lower left')
 
 mp.show()
+
 ```
 
     1: w0=1.000000, w1=1.000000, loss=44.175000
@@ -439,6 +446,7 @@ mp.plot(
 
 mp.legend()  # 左上角的图例
 mp.show()
+
 ```
 
     coef_: [2.2189781]
@@ -448,6 +456,239 @@ mp.show()
 
     
 ![png](ML_files/ML_14_1.png)
+    
+
+
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets, linear_model, model_selection
+
+# science kit learn 自带的糖尿病数据
+X, y = datasets.load_diabetes(return_X_y=True)
+# 442 * 10 大小的二维数组
+print(X.shape)
+# No.1 * 10
+print(X[0])
+
+# 只取第二维的第三列作为特征输入 (也就是0.06169621这一列)
+X = X[:, np.newaxis, 2]
+
+# train : test = 2 : 1
+X_train, X_test, y_train, y_test = model_selection.train_test_split(
+    X, y, test_size=0.33)
+
+model = linear_model.LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+plt.scatter(X_test, y_test, color='black')
+plt.plot(X_test, y_pred, color='blue', linewidth=3)
+plt.show()
+```
+
+    (442, 10)
+    [ 0.03807591  0.05068012  0.06169621  0.02187235 -0.0442235  -0.03482076
+     -0.04340085 -0.00259226  0.01990842 -0.01764613]
+    
+
+
+    
+![png](ML_files/ML_15_1.png)
+    
+
+
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+
+pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+
+pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
+                                                     case=True,
+                                                     regex=True)]
+
+# pumpkins.head()
+
+# pumpkins.isnull().sum()
+
+# A set of new columns for a new dataframe. Filter out nonmatching columns
+pumpkins = pumpkins.drop([
+    c for c in pumpkins.columns if c not in [
+        'Package', 'Variety', 'City Name', 'Month', 'Low Price', 'High Price',
+        'Date'
+    ]
+],
+                         axis=1)
+
+# Get an average between low and high price for the base pumpkin price
+price = (pumpkins['Low Price'] + pumpkins['High Price']) / 2
+
+# Create a new dataframe with this basic data
+new_pumpkins = pd.DataFrame({
+    # Convert the date to its month only
+    'Month':
+    pd.DatetimeIndex(pumpkins['Date']).month,
+    'DayOfYear':
+    pd.to_datetime(pumpkins['Date']).apply(
+        lambda dt: (dt - datetime(dt.year, 1, 1)).days),
+    'Variety':
+    pumpkins['Variety'],
+    'City':
+    pumpkins['City Name'],
+    'Package':
+    pumpkins['Package'],
+    'Low Price':
+    pumpkins['Low Price'],
+    'High Price':
+    pumpkins['High Price'],
+    'Price':
+    price
+})
+
+# Convert the price if the Package contains fractional bushel values
+# loc 遍历Package列中包含 '1 1/9' 的行, 对每行的 Price 列进行操作
+new_pumpkins.loc[new_pumpkins['Package'].str.contains('1 1/9'),
+                 'Price'] = price / (1 + 1 / 9)
+new_pumpkins.loc[new_pumpkins['Package'].str.contains('1/2'),
+                 'Price'] = price / (1 / 2)
+
+# 散点图
+plt.scatter(new_pumpkins.Price, new_pumpkins.Month)
+plt.xlabel('Price')
+plt.ylabel('Month')
+plt.show()
+
+# 柱状图
+new_pumpkins.groupby(['Month'])['Price'].mean().plot(kind='bar')
+plt.ylabel('Month')
+
+ax = None
+colors = ['red', 'blue', 'green', 'yellow']
+for i, var in enumerate(new_pumpkins['Variety'].unique()):
+    ax = new_pumpkins[new_pumpkins['Variety'] == var].plot.scatter('DayOfYear',
+                                                                   'Price',
+                                                                   ax=ax,
+                                                                   c=colors[i],
+                                                                   label=var)
+
+```
+
+
+    
+![png](ML_files/ML_16_0.png)
+    
+
+
+
+    
+![png](ML_files/ML_16_1.png)
+    
+
+
+
+    
+![png](ML_files/ML_16_2.png)
+    
+
+
+#### 多项式回归
+
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+
+pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
+                                                     case=True,
+                                                     regex=True)]
+pumpkins = pumpkins.drop([
+    c for c in pumpkins.columns if c not in [
+        'Package', 'Variety', 'City Name', 'Month', 'Low Price', 'High Price',
+        'Date'
+    ]
+],
+                         axis=1)
+
+price = (pumpkins['Low Price'] + pumpkins['High Price']) / 2
+
+new_pumpkins = pd.DataFrame({
+    'Month':
+    pd.DatetimeIndex(pumpkins['Date']).month,
+    'DayOfYear':
+    pd.to_datetime(pumpkins['Date']).apply(
+        lambda dt: (dt - datetime(dt.year, 1, 1)).days),
+    'Variety':
+    pumpkins['Variety'],
+    'City':
+    pumpkins['City Name'],
+    'Package':
+    pumpkins['Package'],
+    'Low Price':
+    pumpkins['Low Price'],
+    'High Price':
+    pumpkins['High Price'],
+    'Price':
+    price
+})
+
+new_pumpkins.loc[new_pumpkins['Package'].str.contains('1 1/9'),
+                 'Price'] = price / 1.1
+new_pumpkins.loc[new_pumpkins['Package'].str.contains('1/2'),
+                 'Price'] = price * 2
+
+pie_pumpkins = new_pumpkins[new_pumpkins['Variety'] == 'PIE TYPE']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    pie_pumpkins['DayOfYear'].to_numpy().reshape(-1, 1),
+    pie_pumpkins['Price'],
+    test_size=0.2,
+    random_state=0)
+
+pipeline = make_pipeline(PolynomialFeatures(2), LinearRegression())
+
+pipeline.fit(X_train, y_train)
+
+pred = pipeline.predict(X_test)
+
+mse = np.sqrt(mean_squared_error(y_test, pred))
+print(f'Mean error: {mse:3.3} ({mse/np.mean(pred)*100:3.3}%)')
+
+score = pipeline.score(X_train, y_train)
+print('Model determination: ', score)
+
+plt.scatter(X_test, y_test)
+plt.plot(sorted(X_test), pipeline.predict(sorted(X_test)))
+
+```
+
+    Mean error: 2.73 (17.0%)
+    Model determination:  0.07639977655280084
+    
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x19b75ee76d0>]
+
+
+
+
+    
+![png](ML_files/ML_18_2.png)
     
 
 
@@ -476,7 +717,7 @@ iris_feature_E = 'sepal length', 'sepal width', 'petal length', 'petal width'
 iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
 iris_class = 'Iris-setosa', 'Iris-versicolor', 'Iris-virginica'
 
-path = 'iris_classification/iris.data'  # 数据文件路径
+path = './_data/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x = data[list(range(4))]
 # y = pd.Categorical(data[4]).codes
@@ -506,7 +747,7 @@ print('测试集正确率：', accuracy_score(y_test, y_test_hat))
 #     tree.export_graphviz(model, out_file=f, feature_names=iris_feature_E[0:2], class_names=iris_class,
 #                          filled=True, rounded=True, special_characters=True)
 tree.export_graphviz(model,
-                     out_file='iris_classification/iris.dot',
+                     out_file='./_data/iris_classification/iris.dot',
                      feature_names=iris_feature_E[0:2],
                      class_names=iris_class,
                      filled=True,
@@ -524,8 +765,8 @@ dot_data = tree.export_graphviz(model,
                                 rounded=True,
                                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data)
-graph.write_pdf('iris_classification/iris.pdf')
-f = open('iris_classification/iris.png', 'wb')
+graph.write_pdf('./_data/iris_classification/iris.pdf')
+f = open('./_data/iris_classification/iris.png', 'wb')
 f.write(graph.create_png())
 f.close()
 
@@ -635,7 +876,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_16_1.png)
+![png](ML_files/ML_20_1.png)
     
 
 
@@ -662,7 +903,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_16_3.png)
+![png](ML_files/ML_20_3.png)
     
 
 
@@ -683,12 +924,14 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 mpl.rcParams['axes.unicode_minus'] = False
 
 iris_feature = u'花萼长度', u'花萼宽度', u'花瓣长度', u'花瓣宽度'
-path = 'iris_classification/iris.data'  # 数据文件路径
+path = './_data/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x_prime = data[list(range(4))]
 y = pd.Categorical(data[4]).codes
-x_prime_train, x_prime_test, y_train, y_test = train_test_split(
-    x_prime, y, train_size=0.7, random_state=0)
+x_prime_train, x_prime_test, y_train, y_test = train_test_split(x_prime,
+                                                                y,
+                                                                train_size=0.7,
+                                                                random_state=0)
 
 feature_pairs = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]
 plt.figure(figsize=(8, 6), facecolor='#FFFFFF')
@@ -790,7 +1033,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_18_2.png)
+![png](ML_files/ML_22_2.png)
     
 
 
@@ -987,7 +1230,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_20_2.png)
+![png](ML_files/ML_24_2.png)
     
 
 
@@ -997,11 +1240,12 @@ plt.show()
 
 
     
-![png](ML_files/ML_20_4.png)
+![png](ML_files/ML_24_4.png)
     
 
 
 ### 分类问题
+
 
 #### 逻辑回归
 
@@ -1075,7 +1319,7 @@ mp.show()
 
 
     
-![png](ML_files/ML_22_1.png)
+![png](ML_files/ML_27_1.png)
     
 
 
@@ -1127,7 +1371,65 @@ mp.show()
 
 
     
-![png](ML_files/ML_24_0.png)
+![png](ML_files/ML_29_0.png)
+    
+
+
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures, LabelEncoder
+from sklearn.pipeline import make_pipeline
+import seaborn as sns
+
+pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+# pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
+#                                                      case=True,
+#                                                      regex=True)]
+
+new_pumpkins = pumpkins.drop([
+    c for c in pumpkins.columns if c not in
+    ['Color', 'Origin', 'Item Size', 'Variety', 'City Name', 'Package']
+],
+                             axis=1)
+
+new_pumpkins.dropna(inplace=True)
+
+new_pumpkins = new_pumpkins.apply(LabelEncoder().fit_transform)
+
+# 颜色数据与其他列的关系
+sns.PairGrid(new_pumpkins).map(sns.scatterplot)
+
+# 分类散点图
+# sns.swarmplot(x="Color", y="Item Size", data=new_pumpkins)
+
+# 小提琴图
+sns.catplot(x="Color", y="Item Size", kind="violin", data=new_pumpkins)
+
+```
+
+
+
+
+    <seaborn.axisgrid.FacetGrid at 0x19b7ed39fd0>
+
+
+
+
+    
+![png](ML_files/ML_30_1.png)
+    
+
+
+
+    
+![png](ML_files/ML_30_2.png)
     
 
 
@@ -1153,7 +1455,7 @@ from sklearn.model_selection import GridSearchCV
 from time import time
 
 iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
-path = 'iris_classification/iris.data'  # 数据文件路径
+path = './_data/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x, y = data[[0, 1]], pd.Categorical(data[4]).codes
 x_train, x_test, y_train, y_test = train_test_split(x,
@@ -1324,7 +1626,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_26_1.png)
+![png](ML_files/ML_32_1.png)
     
 
 
@@ -1435,7 +1737,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_27_1.png)
+![png](ML_files/ML_33_1.png)
     
 
 
@@ -1573,6 +1875,512 @@ if __name__ == '__main__':
 ```
 
     感冒 
+    
+
+#### 多元问题-菜肴分类
+
+##### 数据加载与清洗
+
+
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
+from imblearn.over_sampling import SMOTE
+
+df = pd.read_csv('./_data/cuisines_classification/cuisines.csv')
+
+df.head()
+
+# df.info()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>cuisine</th>
+      <th>almond</th>
+      <th>angelica</th>
+      <th>anise</th>
+      <th>anise_seed</th>
+      <th>apple</th>
+      <th>apple_brandy</th>
+      <th>apricot</th>
+      <th>armagnac</th>
+      <th>...</th>
+      <th>whiskey</th>
+      <th>white_bread</th>
+      <th>white_wine</th>
+      <th>whole_grain_wheat_flour</th>
+      <th>wine</th>
+      <th>wood</th>
+      <th>yam</th>
+      <th>yeast</th>
+      <th>yogurt</th>
+      <th>zucchini</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>65</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>66</td>
+      <td>indian</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>67</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>68</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>69</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 385 columns</p>
+</div>
+
+
+
+
+```python
+# 菜肴成分分析
+def create_ingredient_df(df):
+    ingredient_df = df.T.drop(['cuisine',
+                               'Unnamed: 0']).sum(axis=1).to_frame('value')
+    ingredient_df = ingredient_df[(ingredient_df.T != 0).any()]
+    ingredient_df = ingredient_df.sort_values(by='value',
+                                              ascending=False,
+                                              inplace=False)
+    return ingredient_df
+
+# 分析原料使用率前十
+for i in ["thai", "japanese", "chinese", "indian", "korean"]:
+    ingredient_df = create_ingredient_df(df[(df.cuisine == i)])
+    ingredient_df.head(10).plot.barh().set_title(i)
+
+# 删掉并不重要的特征
+feature_df = df.drop(['cuisine', 'Unnamed: 0', 'rice', 'garlic', 'ginger'],
+                     axis=1)
+labels_df = df.cuisine
+```
+
+
+    
+![png](ML_files/ML_38_0.png)
+    
+
+
+
+    
+![png](ML_files/ML_38_1.png)
+    
+
+
+
+    
+![png](ML_files/ML_38_2.png)
+    
+
+
+
+    
+![png](ML_files/ML_38_3.png)
+    
+
+
+
+    
+![png](ML_files/ML_38_4.png)
+    
+
+
+
+```python
+# 菜肴样本不均,平衡数据集
+transformed_feature_df, transformed_label_df = SMOTE().fit_resample(
+    feature_df, labels_df)
+
+# 烂方法展示
+# for i in ["thai", "japanese", "chinese", "indian", "korean"]:
+#     print(i, df.loc[df['cuisine'] == i].shape)
+
+# nicer one
+print(
+    f'===================== old label count: ===================== \n{labels_df.value_counts()}\
+    \n===================== new label count: ===================== \n{transformed_label_df.value_counts()}'
+)
+
+transformed_df = pd.concat([transformed_label_df, transformed_feature_df],
+                           axis=1,
+                           join='outer')
+# transformed_df.head()
+transformed_df.info()
+transformed_df.to_csv("./_data/cuisines_classification/cleaned_cuisines.csv")
+```
+
+    ===================== old label count: ===================== 
+    korean      799
+    indian      598
+    chinese     442
+    japanese    320
+    thai        289
+    Name: cuisine, dtype: int64    
+    ===================== new label count: ===================== 
+    indian      799
+    thai        799
+    chinese     799
+    japanese    799
+    korean      799
+    Name: cuisine, dtype: int64
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 3995 entries, 0 to 3994
+    Columns: 381 entries, cuisine to zucchini
+    dtypes: int64(380), object(1)
+    memory usage: 11.6+ MB
+    
+
+##### 分类
+
+
+
+```python
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, classification_report, precision_recall_curve
+from sklearn.svm import SVC
+import numpy as np
+
+cuisines_df = pd.read_csv(
+    "./_data/cuisines_classification/cleaned_cuisines.csv")
+
+cuisines_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>cuisine</th>
+      <th>almond</th>
+      <th>angelica</th>
+      <th>anise</th>
+      <th>anise_seed</th>
+      <th>apple</th>
+      <th>apple_brandy</th>
+      <th>apricot</th>
+      <th>armagnac</th>
+      <th>...</th>
+      <th>whiskey</th>
+      <th>white_bread</th>
+      <th>white_wine</th>
+      <th>whole_grain_wheat_flour</th>
+      <th>wine</th>
+      <th>wood</th>
+      <th>yam</th>
+      <th>yeast</th>
+      <th>yogurt</th>
+      <th>zucchini</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>indian</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>indian</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 382 columns</p>
+</div>
+
+
+
+
+```python
+cuisines_label_df = cuisines_df['cuisine']
+cuisines_feature_df = cuisines_df.drop(['Unnamed: 0', 'cuisine'], axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(cuisines_feature_df,
+                                                    cuisines_label_df,
+                                                    test_size=0.3)
+
+# lbfgs = LogisticRegression(solver='lbfgs')
+lr = LogisticRegression(multi_class='ovr', solver='liblinear')
+
+model = lr.fit(X_train, np.ravel(y_train))
+
+accuracy = model.score(X_test, y_test)
+print("Accuracy is {}".format(accuracy))
+
+
+print(f'ingredients: {X_test.iloc[50][X_test.iloc[50]!=0].keys()}')
+print(f'cuisine: {y_test.iloc[50]}')
+```
+
+    ingredients: Index(['bell_pepper', 'cane_molasses', 'onion', 'soy_sauce'], dtype='object')
+    cuisine: thai
     
 
 ### 聚类问题
@@ -1716,7 +2524,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_31_2.png)
+![png](ML_files/ML_44_2.png)
     
 
 
@@ -1823,7 +2631,7 @@ if __name__ == '__main__':
 
 
     
-![png](ML_files/ML_33_0.png)
+![png](ML_files/ML_46_0.png)
     
 
 
@@ -1840,7 +2648,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # read the data
-train = pd.read_csv("./降维问题/train_v9rqX0R.csv")
+train = pd.read_csv("./_data/降维问题/train_v9rqX0R.csv")
 
 # checking the percentage of missing values in each variable
 # 数据完整率 = (空数 / 所有数) * 100
@@ -1870,7 +2678,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # read the data
-train = pd.read_csv("./降维问题/train_v9rqX0R.csv")
+train = pd.read_csv("./_data/降维问题/train_v9rqX0R.csv")
 
 # 填充空项
 train['Item_Weight'].fillna(train['Item_Weight'].median(), inplace=True)
@@ -1969,9 +2777,101 @@ mp.show()
 
 
     
-![png](ML_files/ML_39_1.png)
+![png](ML_files/ML_52_1.png)
     
 
+
+### Web-app
+
+train 一个逻辑回归模型并用 pickle 打包
+
+然后load
+
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+ufos = pd.read_csv('./_data/web-app/ufos.csv')
+# ufos.head()
+
+ufos = pd.DataFrame({
+    'Seconds': ufos['duration (seconds)'],
+    'Country': ufos['country'],
+    'Latitude': ufos['latitude'],
+    'Longitude': ufos['longitude']
+})
+
+ufos.Country.unique()
+
+ufos.dropna(inplace=True)
+ufos = ufos[(ufos['Seconds'] >= 1) & (ufos['Seconds'] <= 60)]
+
+# ufos.info()
+
+# ['us', nan, 'gb', 'ca', 'au', 'de'] -> 0-5
+ufos['Country'] = LabelEncoder().fit_transform(ufos['Country'])
+
+ufos.head()
+
+# ======================== 准备完成 ==============================
+
+x = ufos[['Seconds', 'Latitude', 'Longitude']]
+y = ufos['Country']
+# ['Seconds', 'Latitude', 'Longitude']  ==>  'Country'
+X_train, X_test, y_train, y_test = train_test_split(x,
+                                                    y,
+                                                    test_size=0.2,
+                                                    random_state=0)
+
+# default max_iter=100 会超限
+model = LogisticRegression(max_iter=1000).fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+print(classification_report(y_test, y_pred))
+print('Predicted labels: ', y_pred)
+print('Accuracy: ', accuracy_score(y_test, y_pred))
+
+# ======================== 打包 model ==============================
+
+model_name = './_data/web-app/ufo-model.pkl'
+
+pickle.dump(model, open(model_name, 'wb'))
+```
+
+                  precision    recall  f1-score   support
+    
+               0       1.00      1.00      1.00        41
+               1       0.85      0.47      0.60       250
+               2       1.00      1.00      1.00         8
+               3       1.00      1.00      1.00       131
+               4       0.97      1.00      0.98      4743
+    
+        accuracy                           0.97      5173
+       macro avg       0.96      0.89      0.92      5173
+    weighted avg       0.97      0.97      0.97      5173
+    
+    Predicted labels:  [4 4 4 ... 3 4 4]
+    Accuracy:  0.9702300405953992
+    
+
+
+```python
+model_load = pickle.load(open(model_name, 'rb'))
+print(model_load.predict([[50, 44, -12]]))
+```
+
+    [3]
+    
+
+    D:\Scoop\apps\anaconda3\current\lib\site-packages\sklearn\base.py:450: UserWarning: X does not have valid feature names, but LogisticRegression was fitted with feature names
+      warnings.warn(
+    
 
 ## 信息论
 
@@ -2004,7 +2904,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_41_0.png)
+![png](ML_files/ML_57_0.png)
     
 
 
@@ -2032,7 +2932,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_43_0.png)
+![png](ML_files/ML_59_0.png)
     
 
 
@@ -2046,3 +2946,4 @@ plt.show()
 
 <a name='cite_note-3' href='#cite_ref-3'>[3]</a>: [The Ultimate Guide to 12 Dimensionality Reduction Techniques (with Python codes)](https://www.analyticsvidhya.com/blog/2018/08/dimensionality-reduction-techniques-python/)
 
+<a name='cite_note-4' href='#cite_ref-4'>[4]</a>: https://github.com/microsoft/ML-For-Beginners
