@@ -507,7 +507,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
-pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+pumpkins = pd.read_csv('./_data_set/US-pumpkins.csv')
 
 pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
                                                      case=True,
@@ -611,7 +611,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
-pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+pumpkins = pd.read_csv('./_data_set/US-pumpkins.csv')
 pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
                                                      case=True,
                                                      regex=True)]
@@ -717,7 +717,7 @@ iris_feature_E = 'sepal length', 'sepal width', 'petal length', 'petal width'
 iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
 iris_class = 'Iris-setosa', 'Iris-versicolor', 'Iris-virginica'
 
-path = './_data/iris_classification/iris.data'  # 数据文件路径
+path = './_data_set/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x = data[list(range(4))]
 # y = pd.Categorical(data[4]).codes
@@ -747,7 +747,7 @@ print('测试集正确率：', accuracy_score(y_test, y_test_hat))
 #     tree.export_graphviz(model, out_file=f, feature_names=iris_feature_E[0:2], class_names=iris_class,
 #                          filled=True, rounded=True, special_characters=True)
 tree.export_graphviz(model,
-                     out_file='./_data/iris_classification/iris.dot',
+                     out_file='./_data_set/iris_classification/iris.dot',
                      feature_names=iris_feature_E[0:2],
                      class_names=iris_class,
                      filled=True,
@@ -765,8 +765,8 @@ dot_data = tree.export_graphviz(model,
                                 rounded=True,
                                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data)
-graph.write_pdf('./_data/iris_classification/iris.pdf')
-f = open('./_data/iris_classification/iris.png', 'wb')
+graph.write_pdf('./_data_set/iris_classification/iris.pdf')
+f = open('./_data_set/iris_classification/iris.png', 'wb')
 f.write(graph.create_png())
 f.close()
 
@@ -924,7 +924,7 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 mpl.rcParams['axes.unicode_minus'] = False
 
 iris_feature = u'花萼长度', u'花萼宽度', u'花瓣长度', u'花瓣宽度'
-path = './_data/iris_classification/iris.data'  # 数据文件路径
+path = './_data_set/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x_prime = data[list(range(4))]
 y = pd.Categorical(data[4]).codes
@@ -1388,7 +1388,7 @@ from sklearn.preprocessing import PolynomialFeatures, LabelEncoder
 from sklearn.pipeline import make_pipeline
 import seaborn as sns
 
-pumpkins = pd.read_csv('./_data/US-pumpkins.csv')
+pumpkins = pd.read_csv('./_data_set/US-pumpkins.csv')
 # pumpkins = pumpkins[pumpkins['Package'].str.contains('bushel',
 #                                                      case=True,
 #                                                      regex=True)]
@@ -1455,7 +1455,7 @@ from sklearn.model_selection import GridSearchCV
 from time import time
 
 iris_feature = '花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'
-path = './_data/iris_classification/iris.data'  # 数据文件路径
+path = './_data_set/iris_classification/iris.data'  # 数据文件路径
 data = pd.read_csv(path, header=None)
 x, y = data[[0, 1]], pd.Categorical(data[4]).codes
 x_train, x_test, y_train, y_test = train_test_split(x,
@@ -1890,7 +1890,7 @@ import matplotlib as mpl
 import numpy as np
 from imblearn.over_sampling import SMOTE
 
-df = pd.read_csv('./_data/cuisines_classification/cuisines.csv')
+df = pd.read_csv('./_data_set/cuisines_classification/cuisines.csv')
 
 df.head()
 
@@ -2143,7 +2143,7 @@ transformed_df = pd.concat([transformed_label_df, transformed_feature_df],
                            join='outer')
 # transformed_df.head()
 transformed_df.info()
-transformed_df.to_csv("./_data/cuisines_classification/cleaned_cuisines.csv")
+transformed_df.to_csv("./_data_set/cuisines_classification/cleaned_cuisines.csv")
 ```
 
     ===================== old label count: ===================== 
@@ -2180,7 +2180,7 @@ from sklearn.svm import SVC
 import numpy as np
 
 cuisines_df = pd.read_csv(
-    "./_data/cuisines_classification/cleaned_cuisines.csv")
+    "./_data_set/cuisines_classification/cleaned_cuisines.csv")
 
 cuisines_df.head()
 ```
@@ -2648,7 +2648,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # read the data
-train = pd.read_csv("./_data/降维问题/train_v9rqX0R.csv")
+train = pd.read_csv("./_data_set/降维问题/train_v9rqX0R.csv")
 
 # checking the percentage of missing values in each variable
 # 数据完整率 = (空数 / 所有数) * 100
@@ -2678,7 +2678,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # read the data
-train = pd.read_csv("./_data/降维问题/train_v9rqX0R.csv")
+train = pd.read_csv("./_data_set/降维问题/train_v9rqX0R.csv")
 
 # 填充空项
 train['Item_Weight'].fillna(train['Item_Weight'].median(), inplace=True)
@@ -2797,7 +2797,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.linear_model import LogisticRegression
 import pickle
 
-ufos = pd.read_csv('./_data/web-app/ufos.csv')
+ufos = pd.read_csv('./_data_set/web-app/ufos.csv')
 # ufos.head()
 
 ufos = pd.DataFrame({
@@ -2839,7 +2839,7 @@ print('Accuracy: ', accuracy_score(y_test, y_pred))
 
 # ======================== 打包 model ==============================
 
-model_name = './_data/web-app/ufo-model.pkl'
+model_name = './_data_set/web-app/ufo-model.pkl'
 
 pickle.dump(model, open(model_name, 'wb'))
 ```
