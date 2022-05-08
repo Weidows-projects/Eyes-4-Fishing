@@ -3,7 +3,7 @@
  # @Author: Weidows
  # @Date: 2022-04-11 15:43:05
  # @LastEditors: Weidows
- # @LastEditTime: 2022-04-25 01:52:18
+ # @LastEditTime: 2022-05-05 00:42:34
  # @FilePath: \Blog-private\source\_posts\public-post\notebook\convert.sh
  # @Description:
  # @!: *********************************************************************
@@ -15,13 +15,13 @@ cd $(dirname $0)
 # convert list
 paths=(
 .
-# .
+.
 ../../python
 )
 
 name=(
 ML
-# DL
+DL
 杂
 )
 

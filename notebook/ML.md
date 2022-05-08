@@ -28,7 +28,7 @@ top_img:
 
 此文为其他文章的代码部分:
 
-> [🥵硬啃-Machine-Learning](../../../../python/AI/ML)
+> [🥵硬啃-Machine-Learning](../../../python/AI/ML)
 
 也提供了 notebook 形式: [代码地址](https://github.com/Weidows-projects/public-post/blob/main/notebook/ML/ML.ipynb)
 
@@ -2167,7 +2167,7 @@ transformed_df.to_csv("./_data_set/cuisines_classification/cleaned_cuisines.csv"
     memory usage: 11.6+ MB
     
 
-##### 分类
+##### 分类-1
 
 
 
@@ -2366,27 +2366,881 @@ X_train, X_test, y_train, y_test = train_test_split(cuisines_feature_df,
                                                     cuisines_label_df,
                                                     test_size=0.3)
 
-# lbfgs = LogisticRegression(solver='lbfgs')
-lr = LogisticRegression(multi_class='ovr', solver='liblinear')
+"""
+1137      korean
+428         thai
+191       indian
+1336      korean
+3947        thai
+          ...
+3335    japanese
+3539        thai
+436         thai
+1875      indian
+3079    japanese
+Name: cuisine, Length: 2796, dtype: object
+['korean' 'thai' 'indian' ... 'thai' 'indian' 'japanese']
+ """
+# print(y_train)
+# print(np.ravel(y_train))
 
-model = lr.fit(X_train, np.ravel(y_train))
+# lbfgs = LogisticRegression(solver='lbfgs')
+model = LogisticRegression(multi_class='ovr',
+                           solver='liblinear').fit(X_train, np.ravel(y_train))
 
 accuracy = model.score(X_test, y_test)
-print("Accuracy is {}".format(accuracy))
 
-
-print(f'ingredients: {X_test.iloc[50][X_test.iloc[50]!=0].keys()}')
-print(f'cuisine: {y_test.iloc[50]}')
+# print("Accuracy is {}".format(accuracy))
+print(f"Accuracy is {accuracy}")
 ```
 
-    ingredients: Index(['bell_pepper', 'cane_molasses', 'onion', 'soy_sauce'], dtype='object')
-    cuisine: thai
+    Accuracy is 0.7906588824020017
+    
+
+
+```python
+# [选择性 test] 针对某一行测试
+
+line_num = 50
+
+print(f'ingredients: {X_test.iloc[line_num][X_test.iloc[line_num]!=0].keys()}')
+print(f'cuisine: {y_test.iloc[line_num]}')
+
+test = X_test.iloc[line_num].values.reshape(-1, 1).T
+proba = model.predict_proba(test)
+classes = model.classes_
+resultdf = pd.DataFrame(data=proba, columns=classes)
+
+topPrediction = resultdf.T.sort_values(by=[0], ascending=[False])
+topPrediction.head()
+```
+
+    ingredients: Index(['butter', 'cayenne', 'cheese', 'cinnamon', 'coriander', 'onion',
+           'tomato', 'turmeric'],
+          dtype='object')
+    cuisine: indian
+    
+
+    D:\Scoop\apps\anaconda3\current\lib\site-packages\sklearn\base.py:450: UserWarning: X does not have valid feature names, but LogisticRegression was fitted with feature names
+      warnings.warn(
+    
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>indian</th>
+      <td>0.962110</td>
+    </tr>
+    <tr>
+      <th>thai</th>
+      <td>0.021403</td>
+    </tr>
+    <tr>
+      <th>korean</th>
+      <td>0.011124</td>
+    </tr>
+    <tr>
+      <th>japanese</th>
+      <td>0.003710</td>
+    </tr>
+    <tr>
+      <th>chinese</th>
+      <td>0.001653</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))
+```
+
+                  precision    recall  f1-score   support
+    
+         chinese       0.76      0.68      0.72       242
+          indian       0.91      0.93      0.92       239
+        japanese       0.72      0.76      0.74       222
+          korean       0.84      0.80      0.82       264
+            thai       0.77      0.84      0.80       232
+    
+        accuracy                           0.80      1199
+       macro avg       0.80      0.80      0.80      1199
+    weighted avg       0.80      0.80      0.80      1199
+    
+    
+
+##### 分类-2
+
+
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, classification_report, precision_recall_curve
+import numpy as np
+import pandas as pd
+
+cuisines_df = pd.read_csv(
+    "./_data_set/cuisines_classification/cleaned_cuisines.csv")
+
+cuisines_label_df = cuisines_df['cuisine']
+cuisines_feature_df = cuisines_df.drop(['Unnamed: 0', 'cuisine'], axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(cuisines_feature_df,
+                                                    cuisines_label_df,
+                                                    test_size=0.3)
+
+```
+
+
+```python
+# 正则化系数
+C = 10
+
+# 创建不同的分类器
+classifiers = {
+    # 线性 SVC 分类器
+    'Linear SVC': SVC(kernel='linear', C=C, probability=True, random_state=0),
+    # K-近邻分类器
+    'KNN classifier': KNeighborsClassifier(C),
+    # Support Vector 分类器
+    'SVC': SVC(),
+    # 集成分类器, 随机森林 与 ADA
+    'RFST': RandomForestClassifier(n_estimators=100),
+    'ADA': AdaBoostClassifier(n_estimators=100)
+}
+
+for index, (name, classifier) in enumerate(classifiers.items()):
+    classifier.fit(X_train, np.ravel(y_train))
+
+    y_pred = classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy (train) for %s: %0.1f%%" % (name, accuracy * 100))
+    print(classification_report(y_test, y_pred))
+
+```
+
+    Accuracy (train) for Linear SVC: 80.2%
+                  precision    recall  f1-score   support
+    
+         chinese       0.73      0.76      0.74       250
+          indian       0.86      0.89      0.88       235
+        japanese       0.78      0.78      0.78       245
+          korean       0.88      0.74      0.80       227
+            thai       0.78      0.84      0.81       242
+    
+        accuracy                           0.80      1199
+       macro avg       0.81      0.80      0.80      1199
+    weighted avg       0.81      0.80      0.80      1199
+    
+    Accuracy (train) for KNN classifier: 73.6%
+                  precision    recall  f1-score   support
+    
+         chinese       0.71      0.73      0.72       250
+          indian       0.80      0.86      0.83       235
+        japanese       0.67      0.80      0.73       245
+          korean       0.91      0.51      0.65       227
+            thai       0.69      0.77      0.73       242
+    
+        accuracy                           0.74      1199
+       macro avg       0.76      0.73      0.73      1199
+    weighted avg       0.75      0.74      0.73      1199
+    
+    Accuracy (train) for SVC: 82.8%
+                  precision    recall  f1-score   support
+    
+         chinese       0.77      0.81      0.79       250
+          indian       0.88      0.93      0.90       235
+        japanese       0.82      0.76      0.79       245
+          korean       0.90      0.77      0.83       227
+            thai       0.79      0.88      0.83       242
+    
+        accuracy                           0.83      1199
+       macro avg       0.83      0.83      0.83      1199
+    weighted avg       0.83      0.83      0.83      1199
+    
+    Accuracy (train) for RFST: 84.5%
+                  precision    recall  f1-score   support
+    
+         chinese       0.82      0.81      0.82       250
+          indian       0.85      0.93      0.89       235
+        japanese       0.86      0.81      0.83       245
+          korean       0.90      0.83      0.86       227
+            thai       0.81      0.85      0.83       242
+    
+        accuracy                           0.84      1199
+       macro avg       0.85      0.85      0.85      1199
+    weighted avg       0.85      0.84      0.84      1199
+    
+    Accuracy (train) for ADA: 69.3%
+                  precision    recall  f1-score   support
+    
+         chinese       0.64      0.42      0.51       250
+          indian       0.81      0.85      0.83       235
+        japanese       0.65      0.61      0.63       245
+          korean       0.62      0.82      0.71       227
+            thai       0.73      0.79      0.76       242
+    
+        accuracy                           0.69      1199
+       macro avg       0.69      0.70      0.69      1199
+    weighted avg       0.69      0.69      0.68      1199
+    
     
 
 ### 聚类问题
 
+#### 聚类入门-数据分布
+
+
+
+```python
+import matplotlib.pyplot as plt
+import pandas as pd
+
+df = pd.read_csv("./_data_set/Clustering/nigerian-songs.csv")
+# df.head()
+df.info()
+# object 类型除外
+df.describe()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 530 entries, 0 to 529
+    Data columns (total 16 columns):
+     #   Column            Non-Null Count  Dtype  
+    ---  ------            --------------  -----  
+     0   name              530 non-null    object 
+     1   album             530 non-null    object 
+     2   artist            530 non-null    object 
+     3   artist_top_genre  530 non-null    object 
+     4   release_date      530 non-null    int64  
+     5   length            530 non-null    int64  
+     6   popularity        530 non-null    int64  
+     7   danceability      530 non-null    float64
+     8   acousticness      530 non-null    float64
+     9   energy            530 non-null    float64
+     10  instrumentalness  530 non-null    float64
+     11  liveness          530 non-null    float64
+     12  loudness          530 non-null    float64
+     13  speechiness       530 non-null    float64
+     14  tempo             530 non-null    float64
+     15  time_signature    530 non-null    int64  
+    dtypes: float64(8), int64(4), object(4)
+    memory usage: 66.4+ KB
+    
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>release_date</th>
+      <th>length</th>
+      <th>popularity</th>
+      <th>danceability</th>
+      <th>acousticness</th>
+      <th>energy</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>loudness</th>
+      <th>speechiness</th>
+      <th>tempo</th>
+      <th>time_signature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+      <td>530.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>2015.390566</td>
+      <td>222298.169811</td>
+      <td>17.507547</td>
+      <td>0.741619</td>
+      <td>0.265412</td>
+      <td>0.760623</td>
+      <td>0.016305</td>
+      <td>0.147308</td>
+      <td>-4.953011</td>
+      <td>0.130748</td>
+      <td>116.487864</td>
+      <td>3.986792</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>3.131688</td>
+      <td>39696.822259</td>
+      <td>18.992212</td>
+      <td>0.117522</td>
+      <td>0.208342</td>
+      <td>0.148533</td>
+      <td>0.090321</td>
+      <td>0.123588</td>
+      <td>2.464186</td>
+      <td>0.092939</td>
+      <td>23.518601</td>
+      <td>0.333701</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1998.000000</td>
+      <td>89488.000000</td>
+      <td>0.000000</td>
+      <td>0.255000</td>
+      <td>0.000665</td>
+      <td>0.111000</td>
+      <td>0.000000</td>
+      <td>0.028300</td>
+      <td>-19.362000</td>
+      <td>0.027800</td>
+      <td>61.695000</td>
+      <td>3.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>2014.000000</td>
+      <td>199305.000000</td>
+      <td>0.000000</td>
+      <td>0.681000</td>
+      <td>0.089525</td>
+      <td>0.669000</td>
+      <td>0.000000</td>
+      <td>0.075650</td>
+      <td>-6.298750</td>
+      <td>0.059100</td>
+      <td>102.961250</td>
+      <td>4.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>2016.000000</td>
+      <td>218509.000000</td>
+      <td>13.000000</td>
+      <td>0.761000</td>
+      <td>0.220500</td>
+      <td>0.784500</td>
+      <td>0.000004</td>
+      <td>0.103500</td>
+      <td>-4.558500</td>
+      <td>0.097950</td>
+      <td>112.714500</td>
+      <td>4.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>2017.000000</td>
+      <td>242098.500000</td>
+      <td>31.000000</td>
+      <td>0.829500</td>
+      <td>0.403000</td>
+      <td>0.875750</td>
+      <td>0.000234</td>
+      <td>0.164000</td>
+      <td>-3.331000</td>
+      <td>0.177000</td>
+      <td>125.039250</td>
+      <td>4.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>2020.000000</td>
+      <td>511738.000000</td>
+      <td>73.000000</td>
+      <td>0.966000</td>
+      <td>0.954000</td>
+      <td>0.995000</td>
+      <td>0.910000</td>
+      <td>0.811000</td>
+      <td>0.582000</td>
+      <td>0.514000</td>
+      <td>206.007000</td>
+      <td>5.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+import seaborn as sns
+
+
+def draw(df):
+    top = df['artist_top_genre'].value_counts()
+    plt.figure(figsize=(10, 7))
+    sns.barplot(x=top[:5].index, y=top[:5].values)
+    plt.xticks(rotation=45)
+    plt.title('Top genres', color='blue')
+
+
+draw(df)
+
+# 过滤掉 Missing
+new_df = df[df['artist_top_genre'] != 'Missing']
+draw(new_df)
+
+featured_df = new_df[((new_df['artist_top_genre'] == 'afro dancehall')
+                      | (new_df['artist_top_genre'] == 'afropop')
+                      | (new_df['artist_top_genre'] == 'nigerian pop'))
+                     & (new_df['popularity'] > 0)]
+draw(featured_df)
+
+corrmat = featured_df.corr()
+f, ax = plt.subplots(figsize=(12, 9))
+sns.heatmap(corrmat, vmax=.8, square=True)
+```
+
+
+
+
+    <AxesSubplot:>
+
+
+
+
+    
+![png](ML_files/ML_50_1.png)
+    
+
+
+
+    
+![png](ML_files/ML_50_2.png)
+    
+
+
+
+    
+![png](ML_files/ML_50_3.png)
+    
+
+
+
+    
+![png](ML_files/ML_50_4.png)
+    
+
+
 #### K-Means-与衡量指标
 
+##### 入门-音乐分类
+
+
+
+```python
+# 这种格式可以运行
+!pip install seaborn
+
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+
+df = pd.read_csv("./_data_set/Clustering/nigerian-songs.csv")
+df.head()
+```
+
+    Looking in indexes: http://mirrors.aliyun.com/pypi/simple/
+    Requirement already satisfied: seaborn in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (0.11.2)
+    Requirement already satisfied: scipy>=1.0 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from seaborn) (1.7.1)
+    Requirement already satisfied: numpy>=1.15 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from seaborn) (1.20.3)
+    Requirement already satisfied: pandas>=0.23 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from seaborn) (1.4.2)
+    Requirement already satisfied: matplotlib>=2.2 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from seaborn) (3.4.3)
+    Requirement already satisfied: python-dateutil>=2.7 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from matplotlib>=2.2->seaborn) (2.8.2)
+    Requirement already satisfied: cycler>=0.10 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from matplotlib>=2.2->seaborn) (0.11.0)
+    Requirement already satisfied: pyparsing>=2.2.1 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from matplotlib>=2.2->seaborn) (3.0.4)
+    Requirement already satisfied: kiwisolver>=1.0.1 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from matplotlib>=2.2->seaborn) (1.3.2)
+    Requirement already satisfied: pillow>=6.2.0 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from matplotlib>=2.2->seaborn) (9.0.1)
+    Requirement already satisfied: pytz>=2020.1 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from pandas>=0.23->seaborn) (2021.3)
+    Requirement already satisfied: six>=1.5 in d:\scoop\apps\anaconda3\2021.11\lib\site-packages (from python-dateutil>=2.7->matplotlib>=2.2->seaborn) (1.16.0)
+    
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>album</th>
+      <th>artist</th>
+      <th>artist_top_genre</th>
+      <th>release_date</th>
+      <th>length</th>
+      <th>popularity</th>
+      <th>danceability</th>
+      <th>acousticness</th>
+      <th>energy</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>loudness</th>
+      <th>speechiness</th>
+      <th>tempo</th>
+      <th>time_signature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Sparky</td>
+      <td>Mandy &amp; The Jungle</td>
+      <td>Cruel Santino</td>
+      <td>alternative r&amp;b</td>
+      <td>2019</td>
+      <td>144000</td>
+      <td>48</td>
+      <td>0.666</td>
+      <td>0.8510</td>
+      <td>0.420</td>
+      <td>0.534000</td>
+      <td>0.1100</td>
+      <td>-6.699</td>
+      <td>0.0829</td>
+      <td>133.015</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>shuga rush</td>
+      <td>EVERYTHING YOU HEARD IS TRUE</td>
+      <td>Odunsi (The Engine)</td>
+      <td>afropop</td>
+      <td>2020</td>
+      <td>89488</td>
+      <td>30</td>
+      <td>0.710</td>
+      <td>0.0822</td>
+      <td>0.683</td>
+      <td>0.000169</td>
+      <td>0.1010</td>
+      <td>-5.640</td>
+      <td>0.3600</td>
+      <td>129.993</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>LITT!</td>
+      <td>LITT!</td>
+      <td>AYLØ</td>
+      <td>indie r&amp;b</td>
+      <td>2018</td>
+      <td>207758</td>
+      <td>40</td>
+      <td>0.836</td>
+      <td>0.2720</td>
+      <td>0.564</td>
+      <td>0.000537</td>
+      <td>0.1100</td>
+      <td>-7.127</td>
+      <td>0.0424</td>
+      <td>130.005</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Confident / Feeling Cool</td>
+      <td>Enjoy Your Life</td>
+      <td>Lady Donli</td>
+      <td>nigerian pop</td>
+      <td>2019</td>
+      <td>175135</td>
+      <td>14</td>
+      <td>0.894</td>
+      <td>0.7980</td>
+      <td>0.611</td>
+      <td>0.000187</td>
+      <td>0.0964</td>
+      <td>-4.961</td>
+      <td>0.1130</td>
+      <td>111.087</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>wanted you</td>
+      <td>rare.</td>
+      <td>Odunsi (The Engine)</td>
+      <td>afropop</td>
+      <td>2018</td>
+      <td>152049</td>
+      <td>25</td>
+      <td>0.702</td>
+      <td>0.1160</td>
+      <td>0.833</td>
+      <td>0.910000</td>
+      <td>0.3480</td>
+      <td>-6.044</td>
+      <td>0.0447</td>
+      <td>105.115</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+fetured_df = df[((df['artist_top_genre'] == 'afro dancehall')
+                 | (df['artist_top_genre'] == 'afropop')
+                 | (df['artist_top_genre'] == 'nigerian pop'))
+                & (df['popularity'] > 0)]
+
+top = fetured_df['artist_top_genre'].value_counts()
+plt.figure(figsize=(10, 7))
+sns.barplot(x=top.index, y=top.values)
+plt.xticks(rotation=45)
+plt.title('Top genres', color='blue')
+
+# 箱线图, 可以直观看出数据的分布
+plt.figure(figsize=(20, 20), dpi=200)
+
+"""
+  plt.subplot(4, 3, 1)
+  sns.boxplot(x='popularity', data=df)
+
+  plt.subplot(4, 3, 2)
+  sns.boxplot(x='acousticness', data=df)
+
+  plt.subplot(4, 3, 3)
+  sns.boxplot(x='energy', data=df)
+
+  plt.subplot(4, 3, 4)
+  sns.boxplot(x='instrumentalness', data=df)
+
+  plt.subplot(4, 3, 5)
+  sns.boxplot(x='liveness', data=df)
+
+  plt.subplot(4, 3, 6)
+  sns.boxplot(x='loudness', data=df)
+
+  plt.subplot(4, 3, 7)
+  sns.boxplot(x='speechiness', data=df)
+
+  plt.subplot(4, 3, 8)
+  sns.boxplot(x='tempo', data=df)
+
+  plt.subplot(4, 3, 9)
+  sns.boxplot(x='time_signature', data=df)
+
+  plt.subplot(4, 3, 10)
+  sns.boxplot(x='danceability', data=df)
+
+  plt.subplot(4, 3, 11)
+  sns.boxplot(x='length', data=df)
+
+  plt.subplot(4, 3, 12)
+  sns.boxplot(x='release_date', data=df)
+ """
+for i, v in enumerate([
+        "popularity", "acousticness", "energy", "instrumentalness", "liveness",
+        "loudness", "speechiness", "tempo", "time_signature", "danceability",
+        "length", "release_date"
+]):
+    plt.subplot(4, 3, i + 1)
+    sns.boxplot(x=v, data=df)
+    # plt.title(v)
+
+```
+
+
+    
+![png](ML_files/ML_53_0.png)
+    
+
+
+
+    
+![png](ML_files/ML_53_1.png)
+    
+
+
+
+```python
+from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import KMeans
+from sklearn import metrics
+
+le = LabelEncoder()
+
+X = df.loc[:, ('artist_top_genre', 'popularity', 'danceability',
+               'acousticness', 'loudness', 'energy')]
+X['artist_top_genre'] = le.fit_transform(X['artist_top_genre'])
+y = le.transform(df['artist_top_genre'])
+
+# 聚为3类
+nclusters = 3
+seed = 0
+
+km = KMeans(n_clusters=nclusters, random_state=seed).fit(X)
+
+# Predict the cluster for each data point
+y_cluster_kmeans = km.predict(X)
+print(y_cluster_kmeans)
+
+score = metrics.silhouette_score(X, y_cluster_kmeans)
+# score 从 [-1,1], 越大表示聚类效果越好
+print(score)
+```
+
+    [2 0 2 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 2 0 0 0 0 0 2 0 0 1 0 0 2 1 1 2 2 2 0
+     2 0 1 2 2 2 0 1 1 2 1 0 0 0 0 1 1 1 1 1 2 0 2 1 0 2 0 1 2 1 2 1 1 1 1 2 1
+     0 2 2 0 0 0 1 0 0 1 1 1 1 0 0 1 1 1 2 1 0 0 1 1 1 0 0 1 0 1 2 0 1 1 2 0 1
+     1 1 1 1 1 1 0 1 0 1 0 1 0 2 1 2 0 1 1 1 0 0 1 1 0 2 0 1 1 0 0 0 1 1 0 1 0
+     2 0 1 1 0 0 0 1 0 1 1 0 1 0 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 0 2 1 1 1 1 1 0
+     1 1 1 1 0 2 0 0 0 0 0 0 1 1 2 1 1 1 1 1 2 1 1 0 0 1 1 1 1 1 0 0 1 0 1 0 0
+     1 2 1 1 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 2 1 1 1 1 1 1 0 1 0 1 0 1 0 1 1 1 1
+     2 0 0 1 1 0 0 0 1 0 0 1 1 1 2 1 1 2 0 0 1 0 1 1 0 1 1 1 0 2 1 1 2 2 2 0 2
+     2 2 2 2 2 2 2 1 2 2 1 2 1 2 1 2 2 2 0 1 0 1 1 0 1 2 1 1 2 1 0 2 2 0 0 0 1
+     0 1 0 1 1 1 1 2 1 1 2 2 1 0 2 0 2 1 1 2 2 2 0 0 2 2 1 1 0 0 0 1 1 1 1 1 1
+     1 1 1 1 2 1 1 0 1 1 1 1 0 1 1 1 1 0 0 1 0 1 1 1 1 1 1 1 1 1 0 1 1 0 1 1 1
+     1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 2 1 2 2 1 0 0 0 1 2 1 1 2 1 0 0 0 2 2 2 0 2
+     2 2 0 2 2 0 1 0 1 2 0 1 1 1 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 1 1 1 1 1 1 0 1
+     0 1 1 1 1 1 1 0 1 1 1 2 0 0 1 1 1 1 2 1 0 2 1 1 1 0 1 1 2 1 0 0 0 0 0 1 1
+     1 1 1 0 0 1 1 1 1 1 1 1]
+    0.5918299843029218
+    
+
+
+```python
+# 手肘方法: 拐点附近就是较好的聚类划分
+wcss = []
+
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42).fit(X)
+    wcss.append(kmeans.inertia_)
+
+plt.figure(figsize=(10, 5))
+sns.lineplot(range(1, 11), wcss, marker='o', color='red')
+plt.title('Elbow')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+```
+
+    D:\Scoop\apps\anaconda3\current\lib\site-packages\sklearn\cluster\_kmeans.py:1036: UserWarning: KMeans is known to have a memory leak on Windows with MKL, when there are less chunks than available threads. You can avoid it by setting the environment variable OMP_NUM_THREADS=3.
+      warnings.warn(
+    D:\Scoop\apps\anaconda3\current\lib\site-packages\seaborn\_decorators.py:36: FutureWarning: Pass the following variables as keyword args: x, y. From version 0.12, the only valid positional argument will be `data`, and passing other arguments without an explicit keyword will result in an error or misinterpretation.
+      warnings.warn(
+    
+
+
+    
+![png](ML_files/ML_55_1.png)
+    
+
+
+
+```python
+# 初始值的随机选取会影响每次的结果
+kmeans = KMeans(n_clusters=3).fit(X)
+
+# 0 | 1 | 2
+labels = kmeans.predict(X)
+plt.scatter(df['popularity'], df['danceability'], c=labels)
+plt.xlabel('popularity')
+plt.ylabel('danceability')
+plt.show()
+
+# 真实值 与 与预测值集合的交集 元素个数
+correct_labels = sum(y == kmeans.labels_)
+
+print("%d/%d samples were correctly labeled." %
+      (correct_labels, y.size))
+print('Accuracy score: {0:0.2f}'.format(correct_labels / float(y.size)))
+
+```
+
+
+    
+![png](ML_files/ML_56_0.png)
+    
+
+
+    93/530 samples were correctly labeled.
+    Accuracy score: 0.18
+    
+
+##### sample-2
 
 
 ```python
@@ -2524,7 +3378,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_44_2.png)
+![png](ML_files/ML_58_2.png)
     
 
 
@@ -2631,7 +3485,7 @@ if __name__ == '__main__':
 
 
     
-![png](ML_files/ML_46_0.png)
+![png](ML_files/ML_60_0.png)
     
 
 
@@ -2777,11 +3631,13 @@ mp.show()
 
 
     
-![png](ML_files/ML_52_1.png)
+![png](ML_files/ML_66_1.png)
     
 
 
 ### Web-app
+
+#### 一
 
 train 一个逻辑回归模型并用 pickle 打包
 
@@ -2797,7 +3653,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.linear_model import LogisticRegression
 import pickle
 
-ufos = pd.read_csv('./_data_set/web-app/ufos.csv')
+ufos = pd.read_csv('./_data_set/web-app/1/ufos.csv')
 # ufos.head()
 
 ufos = pd.DataFrame({
@@ -2839,7 +3695,7 @@ print('Accuracy: ', accuracy_score(y_test, y_pred))
 
 # ======================== 打包 model ==============================
 
-model_name = './_data_set/web-app/ufo-model.pkl'
+model_name = './_data_set/web-app/1/ufo-model.pkl'
 
 pickle.dump(model, open(model_name, 'wb'))
 ```
@@ -2873,6 +3729,60 @@ print(model_load.predict([[50, 44, -12]]))
       warnings.warn(
     
 
+#### 二
+
+
+
+```python
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, classification_report
+
+data = pd.read_csv('./_data_set/cuisines_classification/cleaned_cuisines.csv')
+
+# 删除前两列无用的列
+X = data.iloc[:, 2:]
+y = data[['cuisine']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+model = SVC(kernel='linear', C=10, probability=True, random_state=0)
+# model.fit(X_train, np.revel(y_train))
+model.fit(X_train, y_train.values.ravel())
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))
+```
+
+                  precision    recall  f1-score   support
+    
+         chinese       0.73      0.68      0.70       242
+          indian       0.89      0.88      0.88       246
+        japanese       0.80      0.79      0.79       262
+          korean       0.82      0.75      0.78       229
+            thai       0.75      0.88      0.81       220
+    
+        accuracy                           0.79      1199
+       macro avg       0.79      0.80      0.79      1199
+    weighted avg       0.80      0.79      0.79      1199
+    
+    
+
+
+```python
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+
+# 张量为 380
+initial_type = [('float_input', FloatTensorType([None, 380]))]
+options = {id(model): {'nocl': True, 'zipmap': False}}
+
+onx = convert_sklearn(model, initial_types=initial_type, options=options)
+with open("./_data_set/web-app/2/model.onnx", "wb") as f:
+    f.write(onx.SerializeToString())
+```
+
 ## 信息论
 
 ### 两点分布信息熵
@@ -2904,7 +3814,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_57_0.png)
+![png](ML_files/ML_74_0.png)
     
 
 
@@ -2932,7 +3842,7 @@ plt.show()
 
 
     
-![png](ML_files/ML_59_0.png)
+![png](ML_files/ML_76_0.png)
     
 
 
