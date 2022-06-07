@@ -3,7 +3,7 @@
  # @Author: Weidows
  # @Date: 2022-04-11 15:43:05
  # @LastEditors: Weidows
- # @LastEditTime: 2022-05-05 00:42:34
+ # @LastEditTime: 2022-06-07 19:57:50
  # @FilePath: \Blog-private\source\_posts\public-post\notebook\convert.sh
  # @Description:
  # @!: *********************************************************************
@@ -16,12 +16,14 @@ cd $(dirname $0)
 paths=(
 .
 .
+.
 ../../python
 )
 
 name=(
-ML
 DL
+ML
+MM-Detection
 杂
 )
 
