@@ -3,7 +3,7 @@
  # @Author: Weidows
  # @Date: 2022-04-11 15:43:05
  # @LastEditors: Weidows
- # @LastEditTime: 2022-06-14 20:53:25
+ # @LastEditTime: 2022-06-28 17:05:17
  # @FilePath: \Blog-private\source\_posts\public-post\notebook\convert.sh
  # @Description:
  # @!: *********************************************************************
@@ -41,9 +41,12 @@ for i in "${!paths[@]}"; do
     --to markdown ${paths[$i]}/${name[$i]}/*.ipynb \
     --output ${name[$i]}
 
+  # 处理输出中的特殊字符 (XML不支持会报错)
+  sed -i "s///g" ${paths[$i]}/${name[$i]}/${name[$i]}.md
+
   # hexo 中图片的引用很诡异, 这么做是为了正常显示
   # (需要设置_config.yml中 post_asset_folder: true)
-  mv ${paths[$i]}/${name[$i]}/*.md ${dist[$i]}
+  mv ${paths[$i]}/${name[$i]}/${name[$i]}.md ${dist[$i]}
   mkdir ${dist[$i]}/${name[$i]}
   mv ${paths[$i]}/${name[$i]}/${name[$i]}_files ${dist[$i]}/${name[$i]}
 done
