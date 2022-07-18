@@ -3,7 +3,7 @@
  # @Author: Weidows
  # @Date: 2022-04-11 15:43:05
  # @LastEditors: Weidows
- # @LastEditTime: 2022-07-01 09:54:02
+ # @LastEditTime: 2022-07-01 19:54:04
  # @FilePath: \Blog-private\source\_posts\public-post\notebook\convert.sh
  # @Description:
  # @!: *********************************************************************
@@ -17,7 +17,7 @@ paths=(
   # .
   # .
   # .
-  # .
+  .
   # ../../python
 )
 
@@ -25,7 +25,7 @@ name=(
   # DL
   # ML
   # MM-Detection
-  # 伪随机数发生器
+  伪随机数发生器
   # 杂
 )
 
@@ -33,7 +33,7 @@ dist=(
   # ../../python/code
   # ../../python/code
   # ../../python/code
-  # ../../python/code
+  ../../python/code
   # ../../python
 )
 
