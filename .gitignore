@@ -1,4 +1,6 @@
 **/_model
 **/_others
+**/others
+**/__pycache__
 
 notebook/DL/_data_set/MNIST

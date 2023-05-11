@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "python"
+version = "0.1.0"
+description = ""
+authors = ["Weidows <utsuko27@qq.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pygame = "^2.4.0"
+jupyter = "^1.0.0"
+mq-http-sdk = "^1.0.3"
+softposit = "^0.3.4.4"
+
+[[tool.poetry.source]]
+name = "mirrors"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
+secondary = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+#[tool.setuptools]
+#py-modules = ["numpy", "branding"]
