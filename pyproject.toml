@@ -11,12 +11,13 @@ pygame = "^2.4.0"
 jupyter = "^1.0.0"
 mq-http-sdk = "^1.0.3"
 softposit = "^0.3.4.4"
+pymixbox = "^2.0.0"
 
 [[tool.poetry.source]]
-name = "mirrors"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
-secondary = true
+secondary = false
 
 [build-system]
 requires = ["poetry-core"]

@@ -24,7 +24,7 @@ trio = ["trio (>=0.16,<0.22)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "appnope"
@@ -41,7 +41,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "argon2-cffi"
@@ -66,7 +66,7 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "argon2-cffi-bindings"
@@ -109,7 +109,7 @@ tests = ["pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "arrow"
@@ -129,7 +129,7 @@ python-dateutil = ">=2.7.0"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "asttokens"
@@ -152,7 +152,7 @@ test = ["astroid", "pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "attrs"
@@ -176,7 +176,7 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "backcall"
@@ -193,7 +193,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "beautifulsoup4"
@@ -217,7 +217,7 @@ lxml = ["lxml"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "bleach"
@@ -241,7 +241,7 @@ css = ["tinycss2 (>=1.1.0,<1.2)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "cffi"
@@ -323,7 +323,7 @@ pycparser = "*"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "colorama"
@@ -340,7 +340,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "comm"
@@ -365,7 +365,7 @@ typing = ["mypy (>=0.990)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "debugpy"
@@ -398,7 +398,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "decorator"
@@ -415,7 +415,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "defusedxml"
@@ -432,7 +432,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "executing"
@@ -452,7 +452,7 @@ tests = ["asttokens", "littleutils", "pytest", "rich"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "fastjsonschema"
@@ -472,7 +472,7 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "fqdn"
@@ -489,7 +489,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "idna"
@@ -506,7 +506,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "ipykernel"
@@ -545,7 +545,7 @@ test = ["flaky", "ipyparallel", "pre-commit", "pytest (>=7.0)", "pytest-asyncio"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "ipython"
@@ -589,7 +589,7 @@ test-extra = ["curio", "matplotlib (!=3.2.0)", "nbformat", "numpy (>=1.21)", "pa
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "ipython-genutils"
@@ -606,7 +606,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "ipywidgets"
@@ -633,7 +633,7 @@ test = ["ipykernel", "jsonschema", "pytest (>=3.6.0)", "pytest-cov", "pytz"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "isoduration"
@@ -653,7 +653,7 @@ arrow = ">=0.15.0"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jedi"
@@ -678,7 +678,7 @@ testing = ["Django (<3.1)", "attrs", "colorama", "docopt", "pytest (<7.0.0)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jinja2"
@@ -701,7 +701,7 @@ i18n = ["Babel (>=2.7)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jsonpointer"
@@ -718,7 +718,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jsonschema"
@@ -751,7 +751,7 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter"
@@ -777,7 +777,7 @@ qtconsole = "*"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-client"
@@ -805,7 +805,7 @@ test = ["coverage", "ipykernel (>=6.14)", "mypy", "paramiko", "pre-commit", "pyt
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-console"
@@ -835,7 +835,7 @@ test = ["flaky", "pexpect", "pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-core"
@@ -861,7 +861,7 @@ test = ["ipykernel", "pre-commit", "pytest", "pytest-cov", "pytest-timeout"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-events"
@@ -891,7 +891,7 @@ test = ["click", "coverage", "pre-commit", "pytest (>=7.0)", "pytest-asyncio (>=
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-server"
@@ -932,7 +932,7 @@ test = ["ipykernel", "pre-commit", "pytest (>=7.0)", "pytest-console-scripts", "
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyter-server-terminals"
@@ -957,7 +957,7 @@ test = ["coverage", "jupyter-server (>=2.0.0)", "pytest (>=7.0)", "pytest-cov", 
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyterlab-pygments"
@@ -974,7 +974,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "jupyterlab-widgets"
@@ -991,7 +991,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "markupsafe"
@@ -1056,7 +1056,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "matplotlib-inline"
@@ -1076,7 +1076,7 @@ traitlets = "*"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "mistune"
@@ -1093,7 +1093,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "mq-http-sdk"
@@ -1109,7 +1109,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "nbclassic"
@@ -1150,7 +1150,7 @@ test = ["coverage", "nbval", "pytest", "pytest-cov", "pytest-jupyter", "pytest-p
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "nbclient"
@@ -1178,7 +1178,7 @@ test = ["flaky", "ipykernel", "ipython", "ipywidgets", "nbconvert (>=7.0.0)", "p
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "nbconvert"
@@ -1221,7 +1221,7 @@ webpdf = ["pyppeteer (>=1,<1.1)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "nbformat"
@@ -1248,7 +1248,7 @@ test = ["pep440", "pre-commit", "pytest", "testpath"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "nest-asyncio"
@@ -1265,7 +1265,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "notebook"
@@ -1305,7 +1305,7 @@ test = ["coverage", "nbval", "pytest", "pytest-cov", "requests", "requests-unixs
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "notebook-shim"
@@ -1328,7 +1328,7 @@ test = ["pytest", "pytest-console-scripts", "pytest-jupyter", "pytest-tornasync"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "packaging"
@@ -1345,7 +1345,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pandocfilters"
@@ -1362,7 +1362,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "parso"
@@ -1383,7 +1383,7 @@ testing = ["docopt", "pytest (<6.0.0)"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pexpect"
@@ -1403,7 +1403,7 @@ ptyprocess = ">=0.5"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pickleshare"
@@ -1420,28 +1420,28 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "platformdirs"
-version = "3.5.0"
+version = "3.5.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.5.0-py3-none-any.whl", hash = "sha256:47692bc24c1958e8b0f13dd727307cff1db103fca36399f457da8e05f222fdc4"},
-    {file = "platformdirs-3.5.0.tar.gz", hash = "sha256:7954a68d0ba23558d753f73437c55f89027cf8f5108c19844d4b82e5af396335"},
+    {file = "platformdirs-3.5.1-py3-none-any.whl", hash = "sha256:e2378146f1964972c03c085bb5662ae80b2b8c06226c54b2ff4aa9483e8a13a5"},
+    {file = "platformdirs-3.5.1.tar.gz", hash = "sha256:412dae91f52a6f84830f39a8078cecd0e866cb72294a5c66808e74d5e88d251f"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.1.3)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
+docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.2.1)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "prometheus-client"
@@ -1461,7 +1461,7 @@ twisted = ["twisted"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "prompt-toolkit"
@@ -1481,7 +1481,7 @@ wcwidth = "*"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "psutil"
@@ -1513,7 +1513,7 @@ test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "ptyprocess"
@@ -1530,7 +1530,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pure-eval"
@@ -1550,7 +1550,7 @@ tests = ["pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pycparser"
@@ -1567,7 +1567,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pygame"
@@ -1611,6 +1611,8 @@ files = [
     {file = "pygame-2.4.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5210cb09ec31281e16fda008bf8dfe2e024eef58e075dd0c01935d0004fdfffd"},
     {file = "pygame-2.4.0-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:6060d68d10fafd51c4cb3a7d687d741009881860dfd429c863e570877e2ce9de"},
     {file = "pygame-2.4.0-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:6c0081546749c0b4341ce575622a4f8eee05f675d3a0872ab6aed6e5bd2ba5a8"},
+    {file = "pygame-2.4.0-cp37-cp37m-win32.whl", hash = "sha256:fa2531f83e7c5f6f7cc20a1b4e0f982bd608aad81ff6c385148e64256ab0419f"},
+    {file = "pygame-2.4.0-cp37-cp37m-win_amd64.whl", hash = "sha256:cff815181437add5f3d702e8c7f1d2aa4ed04ed04cde27ec809e7ac516ee6b5f"},
     {file = "pygame-2.4.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:53bfdc1aea619fa8d347be37b08de87089d543375948aacf8b163b0c5eb6d4e4"},
     {file = "pygame-2.4.0-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:7fa1e65fd559823997f39a592cb49d8c89dd31c8bbde8273fe3922e2c1f294f6"},
     {file = "pygame-2.4.0-cp38-cp38-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:65ee75e0e83e393fdc5c06e55e376c7511881a5ebee006ecca89cb1b3b41d6f1"},
@@ -1620,6 +1622,8 @@ files = [
     {file = "pygame-2.4.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef14750fa60b47510cfe9c7c37e7abe67617f5d1f1a8ffa257a59d49836dadda"},
     {file = "pygame-2.4.0-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:5a2aee4214e5efed2cb3650139010dd4d0b1c29a9760278ab259d0b46281b66a"},
     {file = "pygame-2.4.0-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:47be83060a9dbc79763fd230f04d53a29064b5f64d1b59425c432d3570b22623"},
+    {file = "pygame-2.4.0-cp38-cp38-win32.whl", hash = "sha256:14492d8c0eaad778bb10b6d53eaea4ef77f4d3431b6b7c857397dc6cf4397ac9"},
+    {file = "pygame-2.4.0-cp38-cp38-win_amd64.whl", hash = "sha256:6ba967d0e3fed8611f1face6695dc8fa554ee543d300681f8080f5de9cc7da73"},
     {file = "pygame-2.4.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:9f6b7a604812f447495829751dfe7ab57cb31c2c9acdb07ba4b7157490411a12"},
     {file = "pygame-2.4.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:e2a3176b33b97ebae397f951d254e3155a0afe730e1b76fb35126555c27dd3b5"},
     {file = "pygame-2.4.0-cp39-cp39-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:6ec870a63295ebff737640c4ef39868312e206dcba655b4ad5c7d0e8c2488b73"},
@@ -1629,6 +1633,8 @@ files = [
     {file = "pygame-2.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b4c75dd345707da622c78dbd6a63a025f7b89377ddc4e71ba40043929824f5d4"},
     {file = "pygame-2.4.0-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:075c1282b1d307669c8ef29942564b91acb85623bedba3bfb841079d539ded31"},
     {file = "pygame-2.4.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:1422673a2b485153cbc20dbbd37af791c9842ca98a1b7a89fe3ac115cce79805"},
+    {file = "pygame-2.4.0-cp39-cp39-win32.whl", hash = "sha256:fb7bb86c4aedb4382d7f643ff7d21ab4731d59ddb9b448e78b9125ab1addc007"},
+    {file = "pygame-2.4.0-cp39-cp39-win_amd64.whl", hash = "sha256:93bb1406125ae9bd7a9bb0d45f11b30f157ea8d2efee1ebe9d781b1d1a9fce6b"},
     {file = "pygame-2.4.0-pp36-pypy36_pp73-win32.whl", hash = "sha256:2946c151691c80ffb9f3f39e1f294d7ed9edaae1814e528d2f5b4751e7e6d903"},
     {file = "pygame-2.4.0-pp37-pypy37_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:80502eb26483b0206d0508475ec7d67a86bc0afc5bb4aad3a6172a7a85a27554"},
     {file = "pygame-2.4.0-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f9c8bb7b77f97eb49dac900445fbf96a332d2072588949d6396581933843fb04"},
@@ -1644,7 +1650,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pygments"
@@ -1664,7 +1670,24 @@ plugins = ["importlib-metadata"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
+
+[[package]]
+name = "pymixbox"
+version = "2.0.0"
+description = "Pigment-Based Color Mixing"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pymixbox-2.0.0-py2.py3-none-any.whl", hash = "sha256:ac645ee27989ee96622579250ccc057ede2cc57847c56c73082eae2e47341aa4"},
+    {file = "pymixbox-2.0.0.tar.gz", hash = "sha256:7f1fc8e950778efedfc20bbeeaf240576baca06726b3ce83a97ce507f226aee4"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
 
 [[package]]
 name = "pyrsistent"
@@ -1706,7 +1729,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "python-dateutil"
@@ -1726,7 +1749,7 @@ six = ">=1.5"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "python-json-logger"
@@ -1743,7 +1766,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pywin32"
@@ -1772,7 +1795,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pywinpty"
@@ -1793,7 +1816,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pyyaml"
@@ -1848,7 +1871,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "pyzmq"
@@ -1943,7 +1966,7 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "qtconsole"
@@ -1975,7 +1998,7 @@ test = ["flaky", "pytest", "pytest-qt"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "qtpy"
@@ -1998,7 +2021,7 @@ test = ["pytest (>=6,!=7.0.0,!=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-qt"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "rfc3339-validator"
@@ -2018,7 +2041,7 @@ six = "*"
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "rfc3986-validator"
@@ -2035,7 +2058,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "send2trash"
@@ -2057,7 +2080,7 @@ win32 = ["pywin32"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "six"
@@ -2074,7 +2097,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "sniffio"
@@ -2091,7 +2114,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "softposit"
@@ -2118,7 +2141,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "soupsieve"
@@ -2135,7 +2158,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "stack-data"
@@ -2160,7 +2183,7 @@ tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "terminado"
@@ -2186,7 +2209,7 @@ test = ["pre-commit", "pytest (>=7.0)", "pytest-timeout"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "tinycss2"
@@ -2210,7 +2233,7 @@ test = ["flake8", "isort", "pytest"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "tornado"
@@ -2236,7 +2259,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "traitlets"
@@ -2257,7 +2280,7 @@ test = ["argcomplete (>=2.0)", "pre-commit", "pytest", "pytest-mock"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "uri-template"
@@ -2277,7 +2300,7 @@ dev = ["flake8 (<4.0.0)", "flake8-annotations", "flake8-bugbear", "flake8-commas
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "wcwidth"
@@ -2294,7 +2317,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "webcolors"
@@ -2315,7 +2338,7 @@ tests = ["pytest", "pytest-cov"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "webencodings"
@@ -2332,7 +2355,7 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "websocket-client"
@@ -2354,7 +2377,7 @@ test = ["websockets"]
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [[package]]
 name = "widgetsnbextension"
@@ -2371,9 +2394,9 @@ files = [
 [package.source]
 type = "legacy"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "mirrors"
+reference = "tsinghua"
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a1928480c85ae0ecb13448c5edeffe6618a1d6af997134da8143fddac30b7b52"
+content-hash = "51ca7585809ad7d48004fac46cf7e495ba7f97507144bc80e21c6a2fb0f990a5"
