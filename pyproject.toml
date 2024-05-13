@@ -12,6 +12,11 @@ jupyter = "^1.0.0"
 mq-http-sdk = "^1.0.3"
 softposit = "^0.3.4.4"
 pymixbox = "^2.0.0"
+numpy = "^1.25.2"
+pandas = "^2.1.0"
+matplotlib = "^3.7.2"
+seaborn = "^0.12.2"
+joypy = "^0.2.6"
 
 [[tool.poetry.source]]
 name = "tsinghua"
